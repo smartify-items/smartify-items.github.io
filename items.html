@@ -6,7 +6,7 @@
 
 
 <head>
-    <title>Smartify</title>
+    <title>Items</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
 
@@ -23,23 +23,22 @@
 
 <body>
     <!-- Header >> -->
-    <h1 id="h1-title" style="display: none">Smartify <span style="font-size: 11px; font-style: normal; vertical-align: text-top;">alpha</span> <img src="./image/smartify_color_bch_3_bg111111_100_100.png" style="width: 42px"></h1>
+    <h1 id="h1-title" style="display: none">Items</h1>
     <div id="div-menu-dropdown"></div>
     <script src="script/menu-dropdown.js"></script>
     <!-- << Header -->
 
 
-    <div id="div-latest-status" style="color: #555555; text-align: right; vertical-align: top; margin-bottom: 20px;">
-        loading latest items...
-    </div>
 
-    <div id="div-latest-items" style="text-align: center;"></div>
-    
+	<input type="number" name="input-token-id" id="input-token-id" type="text" placeholder="Token ID" style="width: 120px" min="1" onchange="showToken()">
+	<button type="button" onclick="selectRandom()">Select Random</button>
+
+
+	<div id="div-token-info" style="margin: 50px 10% 50px; text-align: center;"></div>
     <div id="div-fullpage" onclick="this.style.display='none'"></div>
 
 
-    <!-- Footer -->
-    <br><br>
+	<br><br>
 
 	<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
 	<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
@@ -48,8 +47,7 @@
 	<script src="script/contract-abi.js"></script>
 	<script src="script/https-rpc.js"></script>
 	<script src="script/common-tools.js"></script>
-	<script src="script/smartify-latest.js"></script>
-
+	<script src="script/smartify-items.js"></script>
 
 </body>
 </html>

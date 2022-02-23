@@ -6,7 +6,7 @@
 
 
 <head>
-    <title>Smartify</title>
+    <title>Transfer</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
 
@@ -22,33 +22,41 @@
 
 
 <body>
+
     <!-- Header >> -->
-    <h1 id="h1-title" style="display: none">Smartify <span style="font-size: 11px; font-style: normal; vertical-align: text-top;">alpha</span> <img src="./image/smartify_color_bch_3_bg111111_100_100.png" style="width: 42px"></h1>
+    <h1 id="h1-title" style="display: none">Transfer</h1>
     <div id="div-menu-dropdown"></div>
     <script src="script/menu-dropdown.js"></script>
     <!-- << Header -->
 
+    <input name="nf-token-id" id="nf-token-id" type="number" min="0" placeholder="Token ID" style="width: 120px" onchange="getOwner0xAddress()">
+    <input name="nft-owner" id="nft-owner" type="text" placeholder="Owner" style="width: 486px" readonly>
 
-    <div id="div-latest-status" style="color: #555555; text-align: right; vertical-align: top; margin-bottom: 20px;">
-        loading latest items...
+    <div style="width: 600px; text-align: center; margin-bottom: 100px">
+        <div id="div-nft-info" style="margin-top: 60px; margin-bottom: 60px;"></div>
+
+        <div id="div-nft-transfer" style="margin-top: 10px; margin-bottom: 10px; display: none;">
+            <button type="button" onclick="onTransfer()">Transfer</button>
+        </div>
+
+        <div id="div-confirm-transfer" style="margin-top: 10px; margin-bottom: 10px; display: none;">
+            <span style="display: inline-block; width: 600px">
+                <input name="recipient-address" id="recipient-address" type="text" placeholder="Recipient Address: 0x..." style="width: 406px">
+            </span>
+            <button id="button-confirm" type="button" onclick="confirmTransfer()">Confirm with Wallet</button>
+        </div>
     </div>
 
-    <div id="div-latest-items" style="text-align: center;"></div>
-    
     <div id="div-fullpage" onclick="this.style.display='none'"></div>
-
-
-    <!-- Footer -->
-    <br><br>
 
 	<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
 	<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
 	<!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
-	<!-- <script src="script/connect-wallet-and-network.js"></script> -->
+	<script src="script/connect-wallet-and-network.js"></script>
 	<script src="script/contract-abi.js"></script>
 	<script src="script/https-rpc.js"></script>
 	<script src="script/common-tools.js"></script>
-	<script src="script/smartify-latest.js"></script>
+	<script src="script/smartify-transfer.js"></script>
 
 
 </body>

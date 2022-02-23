@@ -1,0 +1,46 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hant-TW" xml:lang="zh-Hant-TW">
+
+
+<head>
+    <title>Collectors</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+
+    </style>
+    <link rel="stylesheet" href="css/common-style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="./image/smartify_32_32_trans.png">
+</head>
+
+
+<body>
+	<!-- Header >> -->
+	<h1 id="h1-title" style="display: none">Collectors</h1>
+	<div id="div-menu-dropdown"></div>
+	<script src="script/menu-dropdown.js"></script>
+	<!-- << Header -->
+
+	<input name="collector-address" id="collector-address" type="text" placeholder="0x..." style="width: 430px" onchange="onShowCollected()">
+
+	<div id="div-collector-info" style="line-height: 3"></div>
+	<div id="div-items-collected" style="margin: 12px; text-align: center;"></div>
+	<div id="div-fullpage" onclick="this.style.display='none'"></div>
+
+    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
+    <!-- <script src="script/connect-wallet-and-network.js"></script> -->
+    <script src="script/contract-abi.js"></script>
+    <script src="script/https-rpc.js"></script>
+    <script src="script/common-tools.js"></script>
+    <script src="script/smartify-collectors.js"></script>
+</body>
+</html>

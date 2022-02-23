@@ -1,0 +1,104 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hant-TW" xml:lang="zh-Hant-TW">
+<head>
+<title>Smartify</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+</style>
+<link rel="stylesheet" href="css/common-style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/png" sizes="32x32" href="./image/smartify_32_32_trans.png">
+</head>
+<body>
+    
+    <!-- Header >> -->
+    <h1 id="h1-title" style="display: none">Mint <span style="font-size: 14px; font-style: normal; vertical-align: text-top;">alpha</span></h1>
+    <div id="div-menu-dropdown"></div>
+    <script src="script/menu-dropdown.js"></script>
+    <!-- << Header -->
+
+
+    <h4 class="highlight">Currently only whitelisted users can mint.</h4>
+
+    <!-- Input >> -->
+    <div id="div-input">
+        <div class="div-step">
+            <!-- <p class="line-bold">Non-Fungible Token&nbsp;&nbsp;<span title="ERC721 on smartBCH" class="question-mark" onclick="showDiv('erc721-info')">&nbsp;?&nbsp;</span></p> -->
+            <span class="line">&nbsp;</span>
+            <div id="erc721-info" class="info">
+                There are two common NFT implemention standards on an Ethereum Virtual Machine (EVM), <a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-721/">ERC-721</a> and <a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/">ERC-1155</a>. NFTs minted here adhere to the ERC-721 standard using the <a href="https://smartbch.org/">smartBCH</a> blockchain under contract address <a href="">TBA</a>.
+            </div>
+
+            <!-- File -->
+            <p class="line"><button id="button-for-file" class="file-selector">Select File to Smartify</button></p>
+            <p class="line"><input type="file" id="file-to-smartify" name="file-to-smartify" onchange="updateFile()" style="display: none" />&nbsp;</p>
+            
+            <!--  Title -->
+            <p class="line"><input type="text" id="nft-name" size="12" placeholder="Title" /></p>
+
+            <!-- Description -->
+            <div class="div-textarea"><textarea id="nft-description" cols="" rows="8" style="resize: vertical;" placeholder="Description"></textarea></div>
+
+            <!-- Hashtags -->
+            <p class="line"><input type="text" id="nft-hashtags" style="width: 680px" placeholder="#smartBCH, #noise, #ptt..." /></p>
+
+            <!-- Number of Editions -->
+            <p class="line">
+                <input type="number" id="nft-editions" min="1" style="width: 180px" placeholder="No. of Editions" />
+                <input type="number" id="nft-royalties" min="0" max="25" style="width: 285px" placeholder="Royalties Suggestion (&leq; 25 %)" />
+            </p>
+
+            <!-- Recipient -->
+            <p class="line"><input type="text" id="nft-recipient" style="width: 500px" placeholder="Recipient Account: 0x... (Mints to yourself if not specified)" /></p>
+        </div>
+        
+        <div class="div-step">
+            <!-- <p class="line-bold">Pinata API keys&nbsp;&nbsp;<span title="What is this and why is it needed?" class="question-mark" onclick="showDiv('pinata-info')">&nbsp;?&nbsp;</span></p> -->
+            
+            <div id="pinata-info" class="info">
+                The file selected will be uploaded to the <a href="https://ipfs.io/">InterPlanatery File System (IPFS)</a> via <a href="https://medium.com/pinata/how-to-pin-to-ipfs-effortlessly-ba3437b33885">Pinata's API</a>, as well as a <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON">JSON file></a> that contains information about the NFT using the <a href="https://eips.ethereum.org/EIPS/eip-721">ERC721 Metadata JSON Schema</a>. <br>
+                By using your own API keys you are in full control of the <a href="https://docs.ipfs.io/concepts/persistence/">pinning status</a> of your non-fungible tokenized work. You are responsible for the file you upload and tokenize.
+            </div>
+
+            <input type="text" id="api-key" placeholder="Pinata API Key" value="" style="width: 330px" />&nbsp;<button class="file-selector" onclick="savePinataKeys()">Store keys locally as cookies for 30 days</button><br>
+            <input type="text" id="secret-api-key" placeholder="Pinata Secret API Key" value="" style="width: 680px;" /><br>
+        </div>
+    </div>
+    <!-- << Input -->
+
+    <!-- Preview >> -->
+    <div id="div-preview" class="highlight" style="white-space: pre-wrap; display: none"></div>
+    <!-- << Preview -->
+
+    <div id="div-fullpage" onclick="this.style.display='none'"></div>
+
+    <div style="margin-top: 60px; margin-bottom: 60px">
+        <h4>Minting cost: currently waived for early users, will then start at ~0.0001 BCH.</h4>
+        <button id="button-preview" onclick="showPreview()" class="smartify">Preview &#xBB;</button>
+        <button id="button-back" onclick="goBack()" class="smartify" style="display: none">&#x00AB; Back</button>
+        <button id="button-smartify" onclick="smartify()" class="smartify" style="display: none">SMARTIFY (MINT)</button>
+        &nbsp;&nbsp;&nbsp;<span id="span-status"></span>&nbsp;&nbsp;&nbsp;
+        <br>
+        <button id="button-next-item" onclick="location.reload()" class="" style="display: none">&#x00AB; Mint New Item</button>
+        <span style="padding-left: 120px;">&nbsp;</span>
+        <button id="button-hashtag" onclick="hashtagOnChain()" class="" style="display: none">Optional: send first 3 hashtags on-chain</button>
+    </div>
+
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
+    <script src="script/connect-wallet-and-network.js"></script>
+    <script src="script/contract-abi.js"></script>
+    <script src="script/common-tools.js"></script>
+    <script src="script/smartify-mint.js"></script>
+
+</body>
+</html>
+
+    
