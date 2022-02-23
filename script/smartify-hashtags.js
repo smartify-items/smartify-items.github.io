@@ -42,6 +42,7 @@ async function showHashtagged(hashtag) {
     let previousTokenURI = '';
     let isRepeating = false;
 
+    document.getElementById('div-items-hashtagged').innerHTML = '';
     let htmlToAdd = '';
     let nftJSON;
     
