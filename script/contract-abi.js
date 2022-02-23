@@ -1,4 +1,4 @@
-const smartifyContractAddress = '0x0236Af1CD70bE87dE143d44dcB37Ac2751Ed4ea9';
+const smartifyContractAddress = '0xF43f9602C52AF3620e8eF55376a157e75B36d943';
 
 const smartifyContractABI = [
 	{

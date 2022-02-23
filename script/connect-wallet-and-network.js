@@ -47,10 +47,10 @@ async function connectWallet() {
 
 async function switchNetwork(){
  
-    // const chainIdTo = '0x2710';
-    // const chainIdToName = 'smartBCH';
-    const chainIdTo = '0x4';
-    const chainIdToName = 'Testnet Rinkeby';
+    const chainIdTo = '0x2710';
+    const chainIdToName = 'smartBCH';
+    // const chainIdTo = '0x4';
+    // const chainIdToName = 'Testnet Rinkeby';
 
     try {
         await window.ethereum.request({
