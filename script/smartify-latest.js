@@ -4,48 +4,57 @@ const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provid
 
 
 const minDisplayEntries = 30;
-const queryPeriodHour = 12;
+const queryPeriodHour = 24;
 let itemsShown = 0;
 let itemsShownPrev = 0;
+let emptyQueryCount = 0;
+const emptyQueryCountLimit = 3;     // emptyQueryCountLimit * queryPeriodHour = max search depth; 
 
-showLatestItems(0);
+let offsetHoursTracker = 0;
+let isShowing = false;
+
+showLatestItems(offsetHoursTracker);
 
 async function showLatestItems(offsetHours) {
+    if ( isShowing == false ){
 
-    let blockNum = await provider.getBlockNumber();
-    blockNum = blockNum - Math.floor( offsetHours * 60 * 60 / BLOCK_INTERVAL );
+        isShowing = true;
+        // console.log(itemsShown +' items shown. Getting items from ' + offsetHours);
 
-    
-    const queryPeriodBlock = Math.floor( queryPeriodHour * 60 * 60 / BLOCK_INTERVAL );
-    const fromBlock = blockNum - queryPeriodBlock;
-    const toBlock = blockNum;
+        let blockNum = await provider.getBlockNumber();
+        blockNum = blockNum - Math.round( offsetHours * 60 * 60 / BLOCK_INTERVAL );
 
-    const eventFilter = smartifyContract.filters.CreateToken();
-    const events = await smartifyContract.queryFilter(eventFilter, fromBlock, toBlock);
+        const queryPeriodBlock = Math.round( queryPeriodHour * 60 * 60 / BLOCK_INTERVAL );
+        const fromBlock = blockNum - queryPeriodBlock + 1;
+        const toBlock = blockNum;
 
-    // console.log(events)
+        const eventFilter = smartifyContract.filters.CreateToken();
+        const events = await smartifyContract.queryFilter(eventFilter, fromBlock, toBlock);
+        // console.log(offsetHours + ' hr ' + events.length + ' events from ' + fromBlock + ' to ' + toBlock);
 
-    let previousTokenURI = '';
-    for (let i = events.length-1; i >= 0; i--) {
-        const tokenId = events[i].args[0];
-        const tokenURI = IPFS_GATEWAY + events[i].args[4];
-        const createdBy = events[i].args[2];
+        // console.log(events)
 
-        if (tokenURI !== previousTokenURI) {
-            previousTokenURI = tokenURI;
+        let previousTokenURI = '';
+        for (let i = events.length-1; i >= 0; i--) {
+            const tokenId = events[i].args[0];
+            const tokenURI = IPFS_GATEWAY + events[i].args[4];
+            const createdBy = events[i].args[2];
 
-            let nftJSON = await fetchJSON(tokenURI);
+            if (tokenURI !== previousTokenURI) {
+                previousTokenURI = tokenURI;
 
-            const foundIPFSinJSONImage = nftJSON.image.match(/ipfs:\/\/(\w+)/);
-            if (foundIPFSinJSONImage != null){
-                nftJSON.image = ipfsGateway + foundIPFSinJSONImage[1];
-            }
+                let nftJSON = await fetchJSON(tokenURI);
 
-            // console.log(nftJSON.hashtags);
+                const foundIPFSinJSONImage = nftJSON.image.match(/ipfs:\/\/(\w+)/);
+                if (foundIPFSinJSONImage != null){
+                    nftJSON.image = ipfsGateway + foundIPFSinJSONImage[1];
+                }
 
-            const createdByShort = createdBy.substring(0, 6) + '...' + createdBy.substring(createdBy.length - 4);
+                // console.log(nftJSON.hashtags);
 
-            document.getElementById('div-latest-items').innerHTML +=
+                const createdByShort = createdBy.substring(0, 6) + '...' + createdBy.substring(createdBy.length - 4);
+
+                document.getElementById('div-latest-items').innerHTML +=
 `
 <div class="nft-item">
     <img class="preview" src="${nftJSON.image}" onclick="imgToFullscreen('${nftJSON.image}')">
@@ -64,17 +73,33 @@ async function showLatestItems(offsetHours) {
     </div>
 </div>
 `;
-            itemsShown++;
+                itemsShown++;
+                // console.log('itemsShown: ' + itemsShown);
 
+            }
         }
+
+        document.getElementById('div-latest-status').innerHTML = '...these are our latest items';
+
+        if ( itemsShown == itemsShownPrev ){
+            emptyQueryCount++;
+        } else {
+            emptyQueryCount = 0;
+        }
+
+        offsetHoursTracker = offsetHours + queryPeriodHour;
+
+        if ( itemsShown < minDisplayEntries && emptyQueryCount <= emptyQueryCountLimit ){
+            itemsShownPrev = itemsShown;
+
+            isShowing = false;
+            await showLatestItems(offsetHoursTracker);
+        }
+
+        document.getElementById('button-show-more').style.display = 'inline';
+
+        itemsShown = 0;
+        isShowing = false;
+        // console.log(offsetHoursTracker);
     }
-
-    document.getElementById('div-latest-status').innerHTML = '...these are our latest items';
-
-    if ( itemsShown < minDisplayEntries && itemsShown != itemsShownPrev ){
-        itemsShownPrev = itemsShown;
-        showLatestItems(offsetHours + queryPeriodHour);
-        console.log('Getting more...');
-    }
-
 }
