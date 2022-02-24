@@ -1,0 +1,71 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hant-TW" xml:lang="zh-Hant-TW">
+
+
+<head>
+    <title>Toolkit</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+
+    </style>
+    <link rel="stylesheet" href="css/common-style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="./image/smartify_32_32_trans.png">
+</head>
+
+
+<body>
+    <!-- Header >> -->
+    <h1 id="h1-title" style="display: none">Tookit</h1>
+    <div id="div-menu-dropdown"></div>
+    <script src="script/menu-dropdown.js"></script>
+    <!-- << Header -->
+
+    <h2 class="highlight">Append hashtags </h2>
+
+    <div style="margin: 20px auto 40px">
+        <p>Currently only one set of 3 hashtags is allowed for a given NFT. In the case of multiple editions, the token Creator may attach different sets of hashtags to each individual edition to maximize exposure when an <a href="hashtags.html">on-chain query</a> is made.</p>
+
+        <p>In the <a href="mint.html">minting page</a> the on-chain hashtags are attached only to the first minted edition. You may use the following interface to append hashtags on-chain to other editions of the mint.</p>
+
+        <p>The other use scenario is that for some reason the on-chain hashtagging process failed during the minting process.</p>
+    </div>
+    
+    <!-- <div style="margin: 20px auto 40px">
+        <h3 class="sub-highlight">First enter the ITEM # (Token ID) below to see if there are already on-chian hashtags asscociated.</h3>
+        <p>
+            <input type="number" name="input-token-id" id="input-token-id" type="text" placeholder="ITMS #" style="width: 160px" min="1" onchange="checkHashtagOnChain()">
+        </p>
+    </div> -->
+
+    <div style="margin: 20px auto 40px">
+        <h3 class="sub-highlight">Specify the ITEM # (Token ID) and enter the hashtags (up to three) that you would like to attach to the token. If error warnings occur, most likely it is either that the token is already hashtagged, or you are not the creator.</h3>
+        <input type="number" name="input-token-id" id="input-token-id" type="text" placeholder="ITMS #" style="width: 130px" min="1">
+        <input type="text" id="nft-hashtags" style="width: 360px" placeholder="#smartBCH, #noise, #ptt..." />
+        <button id="button-check-hashtag" onclick="attachHashtagOnChain()" class="">Confirm and Sign with Wallet</button>
+    </div>
+    
+
+
+    <!-- Footer -->
+    <br><br>
+
+	<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+	<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+	<!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
+    <script src="script/network-config.js"></script>
+	<script src="script/connect-wallet-and-network.js"></script>
+	<script src="script/contract-abi.js"></script>
+	<script src="script/common-tools.js"></script>
+	<script src="script/smartify-toolkit.js"></script>
+
+
+</body>
+</html>
