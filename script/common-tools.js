@@ -1,5 +1,20 @@
 const hashtagSpacing = '    ';
 
+function checkBounds(_elementId, _lowerBoundInclusive, _upperBoundInclusive){
+    if ( document.getElementById(_elementId).value == '' ){
+        alert(`Please specify a value for '${_elementId}'.`);
+    }
+
+    if ( document.getElementById(_elementId).value > _upperBoundInclusive ){
+        alert(`Input ${_elementId} value exceeds upper limit.`);
+        document.getElementById(_elementId).value = _upperBoundInclusive;
+    }
+
+    if ( document.getElementById(_elementId).value < _lowerBoundInclusive ){
+        alert(`Input ${_elementId} value exceeds lower limit.`);
+        document.getElementById(_elementId).value = _lowerBoundInclusive;
+    }
+}
 
 async function fetchJSON(api_uri) {
 	let response = await fetch(api_uri);

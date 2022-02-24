@@ -1,3 +1,29 @@
+/* ------------------------------------------------------------------------------------- */
+// supported MIME Types
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+const mimeTypes = [
+    'image/bmp', 
+    'image/gif', 
+    'image/jpeg', 
+    'image/png', 
+    // 'application/pdf', 
+    'image/svg+xml', 
+    'image/tiff'
+];
+
+
+const statusSpinningWheel = '<img src="./image/Spinner-1s-30px.png">';
+const statusMessageUploadingFile = 'Uploading file to IPFS... ';
+const statusMessageUploadingMeta = 'Uploading metadata to IPFS... ';
+const statusMessageMinting = 'Minting NFT... ';
+const statusMessageMinted = 'NFT(s) minted. ';
+const statusMessageHashtagging = 'Hashtagging on-chain... ';
+const statusMessageHashtagged = 'Hashtagged on-chain. ';
+
+/* ------------------------------------------------------------------------------------- */
+// api keys <-> cookie
+
 document.getElementById('api-key').value = getCookie("api-key");
 document.getElementById('secret-api-key').value = getCookie("secret-api-key");
 
@@ -37,6 +63,10 @@ function getCookie(cname) {
     return "";
 }
 
+
+/* ------------------------------------------------------------------------------------- */
+// Button <-> File box
+
 function updateFile(){
     // console.log('file changed');
     if (document.getElementById('file-to-smartify').value != ''){
@@ -47,14 +77,22 @@ function updateFile(){
 }
 
 
-function showDiv(elementId){
-    if (document.getElementById(elementId).style.display == 'block'){
-        document.getElementById(elementId).style.display = 'none';
-    } else {
-        document.getElementById(elementId).style.display = 'block';
-    }
-}
+/* ------------------------------------------------------------------------------------- */
+// '?' Information toggle
 
+// function showDiv(elementId){
+//     if (document.getElementById(elementId).style.display == 'block'){
+//         document.getElementById(elementId).style.display = 'none';
+//     } else {
+//         document.getElementById(elementId).style.display = 'block';
+//     }
+// }
+
+
+
+
+/* ------------------------------------------------------------------------------------- */
+// test inputs for json file
 
 // document.getElementById('nft-name').value = 'TEST';
 // document.getElementById('nft-description').value = 
@@ -73,6 +111,8 @@ function showDiv(elementId){
 
 
 
+/* ------------------------------------------------------------------------------------- */
+// Go Back to Inputs Layout
 function goBack() {
     inPreview = false;
 
@@ -90,17 +130,9 @@ function goBack() {
 }
 
 
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
-const mimeTypes = [
-    'image/bmp', 
-    'image/gif', 
-    'image/jpeg', 
-    'image/png', 
-    // 'application/pdf', 
-    'image/svg+xml', 
-    'image/tiff'
-];
 
+/* ------------------------------------------------------------------------------------- */
+// Preview
 let accountWeb3 = '';
 let mimeType = '';
 let inPreview = false;
@@ -108,28 +140,38 @@ let mintTo = '';
 
 async function showPreview() {
 
+    /* Check file, and file type, if supported */
     if ( document.getElementById('file-to-smartify').files[0] ){
         mimeType = document.getElementById('file-to-smartify').files[0].type;
         if ( mimeTypes.includes(mimeType) ) {
             console.log(mimeType);
         } else {
             alert(`File type ${mimeType} is not supported. For the time being please consider bmp, gif, jpeg, png, svg, tiff files.`);
-
             return 0;
         }
-
     } else {
         alert('Please select a file.');
         return 0;
     }
 
-    if ( document.getElementById('nft-editions').value == '' ){
-        document.getElementById('nft-editions').value = 1;
+    /* Check and require title */
+    if ( document.getElementById('nft-name').value == ''){
+        alert('Please specify a title for the NFT.');
+        return 0;
     }
 
+    /* Check and require editions */
+    if ( document.getElementById('nft-editions').value == '' ){
+        alert('Please specify the number of editions (min = 1).');
+        return 0;
+    }
+
+    /* Check and require title */
     if ( document.getElementById('nft-royalties').value == '' ){
         document.getElementById('nft-royalties').value = 0;
     }
+
+
 
     await connectWallet();
     await connectNetwork();
@@ -145,27 +187,20 @@ async function showPreview() {
     }
 
     if ( ! (_IS_WALLET_CONNECTED_ && _IS_NETWORK_CONNECTED_) ) {
-        // console.log('Please connect wallet to smartBCH network.');
         alert('Please connect wallet to the smartBCH network.');
         return 0;
     }
 
-    // window.ethereum.request({ method: 'eth_requestAccounts' })
-    // .then( ( result ) => { accountWeb3 = result} )
-
     inPreview = true;
     console.log('inPreview: ' + inPreview);
 
+    /* Scroll to page top */
     // document.documentElement.scrollTop || document.body.scrollTop
     document.documentElement.scrollTop = document.body.scrollTop = 0;
 
-
-    let previewContent = '';
-
+    
     const hashtags = parseHashtags();
-    // console.log(hashtags);
-
-    previewContent = 
+    let previewContent = 
 `
 <div class="preview-image"><img class="preview" onclick="imgToFullscreen('${URL.createObjectURL(document.getElementById('file-to-smartify').files[0])}')" src="${URL.createObjectURL(document.getElementById('file-to-smartify').files[0])}"></div>
 
@@ -196,8 +231,8 @@ async function showPreview() {
 [ Editions ]
 <div class="preview-fields">${document.getElementById('nft-editions').value}</div>
 
-[ Royalties Suggeston ]
-<div class="preview-fields">${document.getElementById('nft-royalties').value} %</div>
+[ Royalties Suggeston ] <span style="font-size: 10px">** Only a suggestion per EIP-2981; actual implementation/payout is up to the marketplaces. **</span>
+<div class="preview-fields">${Math.round(document.getElementById('nft-royalties').value*100)/100} %</div>
 
 [ Pinata API Keys ]
 <div class="preview-fields">${document.getElementById('api-key').value}</div>
@@ -206,10 +241,7 @@ async function showPreview() {
 [ NFT Recipient ]
 <div class="preview-fields">${mintTo}</div>
 
-` 
-
-
-    // previewContent += hashtags;
+`;
 
     document.getElementById('div-preview').innerHTML = previewContent;
 
@@ -223,17 +255,76 @@ async function showPreview() {
 }
 
 
+let isSmartifying = false;
+let firstTokenId = 0;
+
+async function smartify(){
+
+    if ( isSmartifying == false ){
+
+        isSmartifying = true;
+        document.getElementById('button-back').style.display = 'none';
+
+        /* upload file to IPFS */
+        document.getElementById('span-status').innerHTML = statusMessageUploadingFile + statusSpinningWheel;
+        const fileIpfsHash = await pinFileToIPFS();
+        console.log(fileIpfsHash);
+
+        /* upload metadeta to IPFS */
+        document.getElementById('span-status').innerHTML = statusMessageUploadingMeta + statusSpinningWheel;
+        const jsonIpfsHash = await pinJSONToIPFS(fileIpfsHash);
+        console.log(jsonIpfsHash);
+        
+        /* convert CID to two bytes32 */
+        const [part_1, part_2] = cidToBytes32(jsonIpfsHash);
+
+        
+        /* Minting */
+        document.getElementById('span-status').innerHTML = statusMessageMinting + statusSpinningWheel;
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, signer);
+
+        const mintFee = await smartifyContract.mintFee();
+
+        try {
+            const contractFunction = await smartifyContract.createToken(
+                document.getElementById('nft-editions').value, 
+                mintTo, 
+                part_1, 
+                part_2, 
+                Math.round(document.getElementById('nft-royalties').value * 100),
+                { value: BigInt(mintFee) * BigInt(document.getElementById('nft-editions').value) });
+
+                const tx = await contractFunction.wait();
+                const event = tx.events[0];
+                console.log(event);
+                firstTokenId = event.args[2].toNumber();
+            
+                document.getElementById('span-status').innerHTML = statusMessageMinted;
+                document.getElementById('button-hashtag').style.display = 'inline';
+                document.getElementById('button-next-item').style.display = 'inline';
+        } catch(e) {
+            alert(e);
+            console.log(e);
+            return 0;
+        }
+
+        isSmartifying = false;    
+
+    }
+}
+
+
 function parseHashtags(){
     const _inputHashtags = document.getElementById('nft-hashtags').value;
 
     let _hashtags = _inputHashtags.split(/[\s,]+/);
     _hashtags = _hashtags.map(s => s.trim());
 
-    // console.log(hashtags);
     return _hashtags;
 }
-
-
 
 async function hashtagOnChain(){
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -252,6 +343,8 @@ async function hashtagOnChain(){
     }
 
     try {
+        document.getElementById('span-status').innerHTML = statusMessageMinted + statusMessageHashtagging + statusSpinningWheel;
+
         const contractFunction = await smartifyContract.createTokenHashtags(
             firstTokenId, 
             hashtagToBytes32(threeHashtags[0]), 
@@ -262,88 +355,17 @@ async function hashtagOnChain(){
         const event = tx.events[0];
         console.log(event);
 
-        document.getElementById('span-status').innerHTML += ' Hashtagged on-chain.';
+        document.getElementById('span-status').innerHTML = statusMessageMinted + statusMessageHashtagged;
         
     } catch(e) {
+        document.getElementById('span-status').innerHTML = statusMessageMinted;
         alert(e);
     }
     
 }
 
-
-
-let isSmartifying = false;
-let firstTokenId = 0;
-
-async function smartify(){
-
-    isSmartifying = true;
-
-    // 
-
-    document.getElementById('span-status').innerHTML = 'Uploading file to IPFS... <img src="./image/Spinner-1s-200px.png" style="max-height: 60px">';
-
-    const fileIpfsHash = await pinFileToIPFS();
-    console.log(fileIpfsHash);
-
-    // 
-
-    document.getElementById('span-status').innerHTML = 'Uploading metadata to IPFS... <img src="./image/Spinner-1s-200px.png" style="max-height: 60px">';
-
-    const jsonIpfsHash = await pinJSONToIPFS(fileIpfsHash);
-    console.log(jsonIpfsHash);
-    
-    // 
-
-    // return[str.substr(0, 32), str_1, str.substr(32), str_2 + zeros.substr(0, zerosToPad)];
-    const [part_1, part_2] = cidToBytes32(jsonIpfsHash);
-
-    // 
-
-    document.getElementById('span-status').innerHTML = 'Minting NFT on smartBCH... <img src="./image/Spinner-1s-200px.png" style="max-height: 60px">';
-
-	const provider = new ethers.providers.Web3Provider(window.ethereum);
-	const signer = provider.getSigner();
-    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, signer);
-
-    const mintFee = await smartifyContract.mintFee();
-
-    try {
-        const contractFunction = await smartifyContract.createToken(
-            document.getElementById('nft-editions').value, 
-            mintTo, 
-            part_1, 
-            part_2, 
-            document.getElementById('nft-royalties').value * 100,
-            { value: BigInt(mintFee) * BigInt(document.getElementById('nft-editions').value) });
-
-            const tx = await contractFunction.wait();
-            const event = tx.events[0];
-            console.log(event);
-            firstTokenId = event.args[2].toNumber();
-        
-            document.getElementById('span-status').innerHTML = 'NFT(s) minted.';
-            document.getElementById('button-hashtag').style.display = 'inline';
-            document.getElementById('button-next-item').style.display = 'inline';
-    } catch(e) {
-        alert(e);
-        return 0;
-    }
-
-    // 
-
-    isSmartifying = false;    
-
-}
-
-
-// const hashtags = parseHashtags().map(s => `"${s}"`).join(", \r\n");
-// console.log(hashtags);
 
 async function pinJSONToIPFS(fileIpfsHash) {
-
-    // const hashtags = parseHashtags().map(s => `"${s}"`).join(", \r\n");
-    // const hashtags = parseHashtags().join(", ");
     const hashtags = parseHashtags();
     let hashtagsOnly = [];
 
@@ -372,11 +394,6 @@ async function pinJSONToIPFS(fileIpfsHash) {
         }
     };
     
-    // console.log(JSONBody);
-    // return 0;
-
-    // const axios = require('axios');
-
     let ipfsJsonCID = '';
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
     await axios
@@ -387,13 +404,10 @@ async function pinJSONToIPFS(fileIpfsHash) {
             }
         })
         .then(function (response) {
-            //handle response here
             console.log(response.data);
-            // document.getElementById('nft-meta-ipfs').value = "ipfs://" + response.data.IpfsHash;
             ipfsJsonCID =  response.data.IpfsHash;
         })
         .catch(function (error) {
-            //handle error here
             console.log(error);
             alert(error);
         });
@@ -406,7 +420,6 @@ async function pinJSONToIPFS(fileIpfsHash) {
 async function pinFileToIPFS() {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     let file = document.getElementById('file-to-smartify').files[0];
-    // console.log(file);
 
     let data = new FormData();
     data.append('file', file);
@@ -422,14 +435,7 @@ async function pinFileToIPFS() {
             }
         }
     ).then(function (response) {
-        // data: {
-        //     IpfsHash: 'QmUtuFJf7XXqL3GgnMcAzcVx3mJXfFJAWxCC9NDPUACY27',
-        //     PinSize: 392595,
-        //     Timestamp: '2022-01-16T20:47:38.041Z'
-        // } 
         console.log(response.data);
-        // document.getElementById('nft-image-ipfs').value = "ipfs://" + response.data.IpfsHash;
-        // ipfs://QmRV22bKxopT1pbGxSZ8C2v5oUrsBjmrFRwwcjitAvbM2v
         ipfsFileCID =  response.data.IpfsHash;
     }).catch(function (error) {
         console.log(error);
@@ -440,31 +446,10 @@ async function pinFileToIPFS() {
 
 }
 
+function onMintNew(){
+    location.reload();
 
-// const keccak256 = require('keccak256')
-
-// console.log(keccak256('hello').toString('hex')) // "1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8"
-
-// console.log(keccak256(Buffer.from('hello')).toString('hex')) // "1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8"
-
-// console.log(keccak256('QmaPkJPCPEWc2ue2vmRa2i5ZqTfqufK2Qyky1Y3zVeA6X9').toString('hex'))
-// 43b58d50f7bc72987bd0f4d93a06a919c80a19644e8da7f3f4d9589a45a0f730
-
-// console.log(ethers.utils.id('QmaPkJPCPEWc2ue2vmRa2i5ZqTfqufK2Qyky1Y3zVeA6X9'));
-// console.log(ethers.utils.id('QmaPkJPCPEWc2ue2vmRa'));
-
-// https://rinkeby.etherscan.io/address/0xfb0c28b3f49c907907b68d5554baec2379d7704b#readContract
-// QmbzgiEUepAmw3VKXfXKwyKx2ayqGmj5AKe6hu5eHzCppM
-// QmbzgiEUepAmw3VKXfXKwyKx2ayqGmj5
-// AKe6hu5eHzCppM
-// 0x516d627a676945556570416d7733564b5866584b77794b7832617971476d6a35
-// 0x414b653668753565487a4370704d000000000000000000000000000000000000
-
-// console.log(cidToBytes32('QmbzgiEUepAmw3VKXfXKwyKx2ayqGmj5AKe6hu5eHzCppM'));
-// [
-//     "0x516d627a676945556570416d7733564b5866584b77794b7832617971476d6a35",
-//     "0x414b653668753565487a4370704d000000000000000000000000000000000000"
-// ]
-
-
-
+    /* Scroll to page top */
+    // document.documentElement.scrollTop || document.body.scrollTop
+    document.documentElement.scrollTop = document.body.scrollTop = 0;
+}

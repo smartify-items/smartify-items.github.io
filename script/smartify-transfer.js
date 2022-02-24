@@ -96,7 +96,7 @@ async function confirmTransfer() {
     const event = tx.events[0];
     console.log(event);
 
-    document.getElementById('button-confirm').innerHTML = 'Transferred. Refresh page to verify.'
+    document.getElementById('button-confirm').innerHTML = 'Transferred.'
 
     const ownerOfNft = await smartifyContract.ownerOf(tokenId);
     document.getElementById('nft-owner').value = ownerOfNft;
