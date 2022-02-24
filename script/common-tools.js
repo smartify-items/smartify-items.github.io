@@ -1,5 +1,6 @@
 const hashtagSpacing = '    ';
 
+
 async function fetchJSON(api_uri) {
 	let response = await fetch(api_uri);
 	
@@ -12,10 +13,55 @@ async function fetchJSON(api_uri) {
 	return await myJSON;
 }
 
+
+async function getOwnedByEvents(_contract, _ownerAddress){
+
+    const filterReceived = _contract.filters.Transfer(null, _ownerAddress, null);
+    const eventsReceived = await _contract.queryFilter(filterReceived);
+    const filterSent = _contract.filters.Transfer(_ownerAddress, null, null);
+    const eventsSent = await _contract.queryFilter(filterSent);
+
+    let ownedTokenIds_ = [];
+    let ownedCandidates = {};
+
+    for (let i = 0; i < eventsReceived.length; i++){
+        const tokenId = eventsReceived[i].args[2];
+        ownedCandidates[String(tokenId)] = {
+            'blockNumber' : eventsReceived[i].blockNumber,
+            'owned' : true,
+        }
+    }
+
+    for (let i = 0; i < eventsSent.length; i++){
+        const tokenId = eventsSent[i].args[2];
+        const recipient = eventsSent[i].args[1];
+        if ( eventsSent[i].blockNumber >= ownedCandidates[String(tokenId)]["blockNumber"]){
+            if ( recipient.toLowerCase() != _ownerAddress.toLowerCase()){
+                ownedCandidates[String(tokenId)]["owned"] = false;
+            }
+        }
+    }
+
+    for (let i = 0; i < eventsReceived.length; i++){
+        const tokenId = eventsReceived[i].args[2];
+        if (ownedCandidates[String(tokenId)]["owned"] === true){
+            if (! ownedTokenIds_.includes(Number(tokenId))){
+                ownedTokenIds_.push(Number(tokenId));
+            }
+        }
+    }
+
+    return ownedTokenIds_;
+
+}
+
+
+
 function displaySwitch(_elementId, _displayStyle){
     document.getElementById(_elementId).style.display = 
 		document.getElementById(_elementId).style.display == 'none' ? _displayStyle : 'none';
 }
+
 
 function imgToFullscreen(img) {
 	// console.log('full-screen');
@@ -43,6 +89,7 @@ function ascii_to_hexa(str) {
     }
     return arr1.join('');
 }
+
 
 function hashtagToBytes32(_hashtag) {
     _bytes32 = '0x' + ascii_to_hexa(_hashtag.substring(0, 32));

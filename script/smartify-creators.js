@@ -1,5 +1,5 @@
-const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
 const params = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop) => searchParams.get(prop),
@@ -45,7 +45,7 @@ async function showCreated(createdBy) {
 
     const createdByShort = createdBy.substring(0, 6) + '...' + createdBy.substring(createdBy.length - 4);
 
-    document.getElementById('div-items-created').innerHTML = 'ITMS&nbsp;&nbsp;made by&nbsp;&nbsp;' + createdByShort;
+    document.getElementById('div-items-created').innerHTML = 'ITMS&nbsp;&nbsp;created by&nbsp;&nbsp;' + createdByShort;
 
     let previousTokenURI = '';
     let isRepeating = false;
@@ -55,7 +55,7 @@ async function showCreated(createdBy) {
     
     for (let i = events.length-1; i >= 0; i--) {
         const tokenId = events[i].args[0];
-        const tokenURI = ipfsGatewayReplacer + events[i].args[4];
+        const tokenURI = IPFS_GATEWAY + events[i].args[4];
 
         if (tokenURI !== previousTokenURI) {
             isRepeating = false;

@@ -1,5 +1,5 @@
-const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
 
 const params = new Proxy(new URLSearchParams(window.location.search), {

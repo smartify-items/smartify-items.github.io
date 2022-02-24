@@ -1,10 +1,18 @@
+document.getElementById('url-contract-address').href = NETWORK_SCANNER + CONTRACT_ADDR;
+document.getElementById('url-contract-address').innerHTML = CONTRACT_ADDR;
+
+if ( DEPLOYED_NETWORK_ID == '0x2710' ){
+    document.getElementById('url-oasis-address').href = 'https://oasis.cash/collection/' + CONTRACT_ADDR;
+    document.getElementById('h4-marketplace').style.display = 'block';
+}
+
 
 async function readContractStatVar(){
     console.log('Reading contract state variables...');
     document.getElementById('list-contract-info').innerHTML = 'Loading...';
 
-    const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-    const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+    const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
     let listContent = '';
 
@@ -38,8 +46,8 @@ async function readUserAddedByAdmin() {
     console.log('Reading whitelisted addresses...');
     document.getElementById('list-UserAddedByAdmin').innerHTML = 'Loading...';
     
-    const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-    const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+    const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
     const blockNum = await provider.getBlockNumber();   
     const queryPeriodHour = 24;
@@ -72,8 +80,8 @@ async function readUserAddedByUser() {
     console.log('Reading whitelisted addresses...');
     document.getElementById('list-UserAddedByUser').innerHTML = 'Loading...';
 
-    const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-    const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+    const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
     const blockNum = await provider.getBlockNumber();   
     const queryPeriodHour = 24;
@@ -105,7 +113,7 @@ async function adminAddUser() {
     if ( ethers.utils.isAddress(document.getElementById('address').value) ){
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, signer);
+        const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, signer);
         try {
             await smartifyContract.adminAddUser(document.getElementById('address').value);
         } catch(e) {
@@ -119,7 +127,7 @@ async function userAddUser() {
     if ( ethers.utils.isAddress(document.getElementById('address').value) ){
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, signer);
+        const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, signer);
         try {
             await smartifyContract.userAddUser(document.getElementById('address').value);
         } catch(e) {
@@ -133,7 +141,7 @@ async function addAdmin() {
     if ( ethers.utils.isAddress(document.getElementById('address').value) ){
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, signer);
+        const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, signer);
         try {
             await smartifyContract.addAdmin(document.getElementById('address').value);
         } catch(e) {
@@ -147,8 +155,8 @@ async function addAdmin() {
 async function verifyUser() {
     if ( ethers.utils.isAddress(document.getElementById('address').value) ){
 
-        const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-        const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+        const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+        const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
         
         const isWhitelisted = await smartifyContract.verifyUser(document.getElementById('address').value); 
         document.getElementById('div-address-info').innerHTML = 'isWhitelisted: ' + isWhitelisted;
@@ -162,8 +170,8 @@ async function verifyUser() {
 
 async function verifyAdmin() {
     if ( ethers.utils.isAddress(document.getElementById('address').value) ){
-        const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-        const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+        const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+        const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
         
         const isAdmin = await smartifyContract.verifyAdmin(document.getElementById('address').value); 
         document.getElementById('div-address-info').innerHTML = 'isAdmin: ' + isAdmin;
@@ -176,8 +184,8 @@ async function verifyAdmin() {
 async function tokenURI() {
     document.getElementById('div-token-info').innerHTML = 'Retrieving info...';
 
-    const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-    const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+    const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
     try {
         const result = await smartifyContract.tokenURI(document.getElementById('token-id').value); 
         document.getElementById('div-token-info').innerHTML = 'tokenURI | ' + result;
@@ -189,8 +197,8 @@ async function tokenURI() {
 async function ownerOf() {
     document.getElementById('div-token-info').innerHTML = 'Retrieving info...';
 
-    const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-    const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+    const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
     try {
         const result = await smartifyContract.ownerOf(document.getElementById('token-id').value); 
         document.getElementById('div-token-info').innerHTML = 'ownerOf | ' + result;
@@ -202,8 +210,8 @@ async function ownerOf() {
 async function royaltyInfo() {
     document.getElementById('div-token-info').innerHTML = 'Retrieving info...';
 
-    const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-    const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+    const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
     try {
         const [receiver, amount] = await smartifyContract.royaltyInfo(document.getElementById('token-id').value, 100); 
         document.getElementById('div-token-info').innerHTML = 'royaltyInfo | ' + amount + '% to ' + receiver;

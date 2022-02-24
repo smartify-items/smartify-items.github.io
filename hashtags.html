@@ -29,7 +29,7 @@
     <!-- << Header -->
 
 
-    <input name="input-hashtag" id="input-hashtag" type="text" placeholder="#hashtag" style="width: 320px" onchange="showHashtagged(decodeURI(this.value))">
+    <input name="input-hashtag" id="input-hashtag" type="text" placeholder="#hashtag (queries only on-chain hashtags)" style="width: 360px" onchange="showHashtagged(decodeURI(this.value))">
 
     <div id="div-items-hashtagged" style="margin: 12px; text-align: center;"></div>
     <div id="div-fullpage" onclick="this.style.display='none'"></div>
@@ -37,9 +37,9 @@
     <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
+    <script src="script/network-config.js"></script>
     <!-- <script src="script/connect-wallet-and-network.js"></script> -->
     <script src="script/contract-abi.js"></script>
-    <script src="script/https-rpc.js"></script>
     <script src="script/common-tools.js"></script>
     <script src="script/smartify-hashtags.js"></script>
 

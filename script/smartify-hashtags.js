@@ -1,5 +1,5 @@
-const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
 const params = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop) => searchParams.get(prop),
@@ -63,7 +63,7 @@ async function showHashtagged(hashtag) {
 
         const creator = tokenEvents[0].args[2];
         // const editions = tokenEvents[0].args[3];
-        const tokenURI = ipfsGatewayReplacer + tokenEvents[0].args[4];
+        const tokenURI = IPFS_GATEWAY + tokenEvents[0].args[4];
         console.log(tokenURI);
 
         const creatorShort = creator.substring(0, 6) + '...' + creator.substring(creator.length - 4);

@@ -1,5 +1,5 @@
-const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
 const params = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop) => searchParams.get(prop),
@@ -81,7 +81,6 @@ async function showCollection(_creator, _hashtag) {
 
     let events;
 
-    let createdTokenIds = [];
     let creatorEvents = [];
     if ( _creator != '' ){
         [createdTokenIds, creatorEvents] = await getCreatorTokenIds(_creator);
@@ -119,7 +118,7 @@ async function showCollection(_creator, _hashtag) {
 
         let tokenURI;
         if ( _creator != '' && _hashtag != '' ) {       // both creator and hashtag
-            tokenURI = ipfsGatewayReplacer + events[i].args[4];
+            tokenURI = IPFS_GATEWAY + events[i].args[4];
 
             // console.log(previousTokenURItoMatch);
             // console.log(tokenURI);
@@ -146,11 +145,11 @@ async function showCollection(_creator, _hashtag) {
             // console.log(tokenEvents);
             // creator = tokenEvents[0].args[2];
             // editions = tokenEvents[0].args[3];
-            tokenURI = ipfsGatewayReplacer + tokenEvents[0].args[4];
+            tokenURI = IPFS_GATEWAY + tokenEvents[0].args[4];
         }
 
         if ( _creator != '' && _hashtag == '' ) {       // in this case events = creatorEvents
-            tokenURI = ipfsGatewayReplacer + events[i].args[4];
+            tokenURI = IPFS_GATEWAY + events[i].args[4];
         }
 
         // console.log(tokenURI);

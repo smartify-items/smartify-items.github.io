@@ -31,7 +31,13 @@
     <h4>
         Contract Address: 
         <br>
-        <a href="https://www.smartscan.cash/address/0x8912EE75259778AA70981B73307C8B1b6B4A9ee1">0x8912EE75259778AA70981B73307C8B1b6B4A9ee1</a>
+        <a id="url-contract-address" href=""></a>
+    </h4>
+
+    <h4 id="h4-marketplace" style="display: none">
+        Marketplace: 
+        <br>
+        <a id="url-oasis-address" href="">Listing on Oasis</a>
     </h4>
 
     <br>
@@ -46,7 +52,7 @@
 
     <br>
 
-    <button type="button" onclick="readUserAddedByUser()">Query UserAddedByUser Events (last 24hr)</button>
+    <!-- <button type="button" onclick="readUserAddedByUser()">Query UserAddedByUser Events (last 24hr)</button> -->
     <ul id="list-UserAddedByUser"></ul>
 
     <br>
@@ -56,7 +62,7 @@
     <button type="button" onclick="verifyUser()">verifyUser</button>
     <button type="button" onclick="verifyAdmin()">verifyAdmin</button>
     <button type="button" onclick="adminAddUser()">adminAddUser</button>
-    <button type="button" onclick="userAddUser()">userAddUser</button>
+    <!-- <button type="button" onclick="userAddUser()">userAddUser</button> -->
     <button type="button" onclick="addAdmin()">addAdmin</button>
     <div id="div-address-info"></div>
 
@@ -74,9 +80,9 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
+    <script src="script/network-config.js"></script>
     <script src="script/connect-wallet-and-network.js"></script>
     <script src="script/contract-abi.js"></script>
-    <script src="script/https-rpc.js"></script>
     <script src="script/smartify-contract.js"></script>
 
 

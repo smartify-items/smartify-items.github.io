@@ -1,5 +1,5 @@
-const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
 
 
@@ -61,19 +61,19 @@ async function showToken() {
         const editions = events[0].args[3];
         // const royalties = events[0].args[5] / 100;
 
-        const tokenURI = ipfsGatewayReplacer + events[0].args[4];
+        const tokenURI = IPFS_GATEWAY + events[0].args[4];
 
         // let tokenURI = await smartifyContract.tokenURI(tokenId);
         // const foundIPFSinURI = tokenURI.match(/ipfs:\/\/(\w+)/);
         // // console.log(foundIPFSinURI);
         // if (foundIPFSinURI != null){
-        //     tokenURI = ipfsGatewayReplacer + foundIPFSinURI[1];
+        //     tokenURI = IPFS_GATEWAY + foundIPFSinURI[1];
         // }
 
         let nftJSON = await fetchJSON(tokenURI);
         const foundIPFSinJSONImage = nftJSON.image.match(/ipfs:\/\/(\w+)/);
         if (foundIPFSinJSONImage != null){
-            nftJSON.image = ipfsGatewayReplacer + foundIPFSinJSONImage[1];
+            nftJSON.image = IPFS_GATEWAY + foundIPFSinJSONImage[1];
         }
         document.getElementById('div-token-info').innerHTML +=
         `

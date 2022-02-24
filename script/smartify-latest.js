@@ -1,11 +1,10 @@
 
-const provider = new ethers.providers.JsonRpcProvider(httpsRPC);
-const smartifyContract = new ethers.Contract(smartifyContractAddress, smartifyContractABI, provider);
+const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
 
 const minDisplayEntries = 30;
 const queryPeriodHour = 12;
-const blockInterval = 5;    // smartBCH: 1 block every 5 seconds
 let itemsShown = 0;
 let itemsShownPrev = 0;
 
@@ -14,10 +13,10 @@ showLatestItems(0);
 async function showLatestItems(offsetHours) {
 
     let blockNum = await provider.getBlockNumber();
-    blockNum = blockNum - (offsetHours * 60 * 60 / blockInterval);
+    blockNum = blockNum - Math.floor( offsetHours * 60 * 60 / BLOCK_INTERVAL );
 
-    // const queryPeriodHour = document.getElementById('query-period-hours').value;
-    const queryPeriodBlock = queryPeriodHour * 60 * 60 / blockInterval;
+    
+    const queryPeriodBlock = Math.floor( queryPeriodHour * 60 * 60 / BLOCK_INTERVAL );
     const fromBlock = blockNum - queryPeriodBlock;
     const toBlock = blockNum;
 
@@ -27,27 +26,10 @@ async function showLatestItems(offsetHours) {
     // console.log(events)
 
     let previousTokenURI = '';
-    let n_dots = 0;
     for (let i = events.length-1; i >= 0; i--) {
-        // event CreateToken(
-        //     uint256 indexed tokenId, 
-        //     string indexed hashedIpfsCID, 
-        //     address indexed createdBy, 
-        //     uint16 editions, 
-        //     string plainIpfsCID
-        // );
-    
-        // event TokenHashtags(
-        //     uint256 tokenId, 
-        //     bytes32 indexed hashtag_1, 
-        //     bytes32 indexed hashtag_2, 
-        //     bytes32 indexed hashtag_3
-        // );
-
         const tokenId = events[i].args[0];
-        const tokenURI = ipfsGatewayReplacer + events[i].args[4];
+        const tokenURI = IPFS_GATEWAY + events[i].args[4];
         const createdBy = events[i].args[2];
-        
 
         if (tokenURI !== previousTokenURI) {
             previousTokenURI = tokenURI;
