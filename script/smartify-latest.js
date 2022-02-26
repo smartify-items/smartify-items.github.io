@@ -4,11 +4,11 @@ const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provid
 
 
 const minDisplayEntries = 30;
-const queryPeriodHour = 24;
+const queryPeriodHour = 48;
 let itemsShown = 0;
 let itemsShownPrev = 0;
 let emptyQueryCount = 0;
-const emptyQueryCountLimit = 3;     // emptyQueryCountLimit * queryPeriodHour = max search depth; 
+const emptyQueryCountLimit = 7;     // emptyQueryCountLimit * queryPeriodHour = max search depth; 
 
 let offsetHoursTracker = 0;
 let isShowing = false;
