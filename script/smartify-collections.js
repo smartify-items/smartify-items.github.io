@@ -162,7 +162,7 @@ async function showCollection(_creator, _hashtag) {
         if (tokenURI !== previousTokenURI) {    // finds a new token
             isRepeating = false;
 
-            if ( i > 0 && i < createdTokenIds.length-1 ){    // checks out htmlToAdd to innerHTML only after first NFT
+            if ( i > 0 ){    // checks out htmlToAdd to innerHTML only after first NFT
                                                     // does not check out for the last array element
                 htmlToAdd += `
     </div>
