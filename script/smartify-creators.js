@@ -5,20 +5,37 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop) => searchParams.get(prop),
 });
 
+
+
+
+let isShowingCreated = false;
+
 if (params["a"] !== null){
 	document.getElementById('creator-address').value = params["a"];
     onShowCreated();
 }
 
+async function onShowCreated() {
 
-function onShowCreated() {
+    document.getElementById('button-share-link').style.display = 'none';
+    document.getElementById('a-check-collections').style.display = 'none';
+    document.getElementById('div-items-created').innerHTML = '';
+
     const creatorAddress = document.getElementById('creator-address').value;
     if ( ethers.utils.isAddress(creatorAddress) ){
-        document.getElementById('div-items-created').innerHTML = 'Loading...';
-        showCreated(creatorAddress);
+        if ( isShowingCreated == false ){
+            isShowingCreated = true;
+            document.getElementById('creator-address').readOnly = true;
+            document.getElementById('div-query-status').innerHTML = 'Loading... ';
+
+            await showCreated(creatorAddress);
+
+            isShowingCreated = false;
+            document.getElementById('creator-address').readOnly = false;
+            document.getElementById('div-query-status').innerHTML = '';
+        }
     } else {
-        document.getElementById('div-items-created').innerHTML = 'Please enter a valid creator address.';
-        return 0;
+        document.getElementById('div-query-status').innerHTML = 'Please enter a valid creator address.';
     }
 }
 
@@ -26,22 +43,6 @@ async function showCreated(createdBy) {
 
     const eventFilter = smartifyContract.filters.CreateToken(null, null, createdBy);
     const events = await smartifyContract.queryFilter(eventFilter);
-    // console.log(events);
-
-    // event CreateToken(
-    //     uint256 indexed tokenId, 
-    //     string indexed hashedIpfsCID, 
-    //     address indexed createdBy, 
-    //     uint16 editions, 
-    //     string plainIpfsCID
-    // );
-
-    // event TokenHashtags(
-    //     uint256 tokenId, 
-    //     bytes32 indexed hashtag_1, 
-    //     bytes32 indexed hashtag_2, 
-    //     bytes32 indexed hashtag_3
-    // );
 
     const createdByShort = createdBy.substring(0, 6) + '...' + createdBy.substring(createdBy.length - 4);
 
@@ -115,9 +116,20 @@ async function showCreated(createdBy) {
     </div>
 </div>
 `;
+
     isRepeating = false;
     
     document.getElementById('div-items-created').innerHTML += htmlToAdd;
 
+    if ( document.getElementById('div-items-created').innerHTML == '' ){
+        document.getElementById('div-items-created').innerHTML = 'No items found.';
+    } else {
+        document.getElementById('button-share-link').innerHTML = 'Copy Share Link';
+        document.getElementById('button-share-link').style.display = 'inline';
+
+        document.getElementById('a-check-collections').href = `collections.html?a=${createdBy}`;
+        document.getElementById('a-check-collections').innerHTML = `check out Collections created by ${createdByShort}`;
+        document.getElementById('a-check-collections').style.display = 'inline';
+    }
 
 }

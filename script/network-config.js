@@ -34,7 +34,7 @@ const IPFS_GATEWAYS = [];
     IPFS_GATEWAYS[2] = 'https://infura-ipfs.io/ipfs/';
     IPFS_GATEWAYS[3] = 'https://gateway.pinata.cloud/ipfs/';
     IPFS_GATEWAYS[4] = 'https://cloudflare-ipfs.com/ipfs/';
-const IPFS_GATEWAY = IPFS_GATEWAYS[0];
+const IPFS_GATEWAY = IPFS_GATEWAYS[2];
 
 
 // Rinkeby
@@ -66,18 +66,23 @@ const SMARTBCH_BLOCK_INTERVAL = 5.5;   // 1 block every 5.5 seconds on average
 
 let HTTPS_RPC;
 let NETWORK_SCANNER;
-let TESTNET_MARKER;
 let BLOCK_INTERVAL;
+let TESTNET_MARKER;
+let BASE_URL;
 
 switch ( Number(DEPLOYED_NETWORK_ID) ){
     case 0x4:       // Testnet Rinkeby
         HTTPS_RPC = RINKEBY_RPC;
         NETWORK_SCANNER = RINKEBY_SCANNER;
         BLOCK_INTERVAL = RINKEBY_BLOCK_INTERVAL;
+        TESTNET_MARKER = '&nbsp;&nbsp;&nbsp;&nbsp;* Testnet Rinkeby *';
+        BASE_URL = 'https://dliwilb.github.io/smartify-items/';
         break;
     case 0x2710:    // smartBCH
         HTTPS_RPC = SMARTBCH_RPC;
         NETWORK_SCANNER = SMARTBCH_SCANNER;
 		BLOCK_INTERVAL = SMARTBCH_BLOCK_INTERVAL;
+        TESTNET_MARKER = '';
+        BASE_URL = 'https://smartify-items.github.io/';
         break;
 }

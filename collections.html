@@ -25,13 +25,16 @@
 	<!-- Header >> -->
 	<h1 id="h1-title" style="display: none">Collections</h1>
 	<div id="div-menu-dropdown"></div>
-	<script src="script/menu-dropdown.js"></script>
 	<!-- << Header -->
 
 	<input name="creator-address" id="creator-address" type="text" placeholder="Creator Address: 0x..." style="width: 430px" onchange="onShowCollection()">
     <input name="input-hashtag" id="input-hashtag" type="text" placeholder="#hashtag (on-chained only)" style="width: 320px" onchange="onShowCollection()">
+    <span style="padding-left: 4px">&nbsp;</span>
+    <button id="button-share-link" style="display: none" onclick="copyShareLink('collections')">Copy Share Link</button>
+    <!-- <span id="span-link-copied" style="padding-left: 20px"></span> -->
 
-	<div id="div-collector-info" style="line-height: 3"></div>
+	<div id="div-query-status" style="line-height: 3"></div>
+    <div id="div-collection-hashtags" class="collection-hashtags"></div>
 	<div id="div-collection" style="margin: 12px; text-align: center;"></div>
 	<div id="div-fullpage" onclick="this.style.display='none'"></div>
 
@@ -39,6 +42,7 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
     <script src="script/network-config.js"></script>
+    <script src="script/menu-dropdown.js"></script>
     <!-- <script src="script/connect-wallet-and-network.js"></script> -->
     <script src="script/contract-abi.js"></script>
     <script src="script/common-tools.js"></script>

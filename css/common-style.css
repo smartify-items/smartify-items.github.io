@@ -212,6 +212,12 @@
         text-align: left;
         /* overflow-wrap: break-word; */
         white-space: pre-wrap;
+    }
+
+    div.collection-hashtags {
+        white-space: pre-wrap;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }   
 
     span.nftdisplay {

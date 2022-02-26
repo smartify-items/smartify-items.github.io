@@ -6,24 +6,71 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop) => searchParams.get(prop),
 });
 
+
+
+let isShowingCollected = false;
+
 if (params["a"] !== null){
 	document.getElementById('collector-address').value = params["a"];
     onShowCollected();
 }
 
+async function onShowCollected() {
+    if ( isShowingCollected == false ){
+        const collectorAddress = document.getElementById('collector-address').value;
+        if ( ethers.utils.isAddress(collectorAddress) ){
+            isShowingCollected = true;
+            document.getElementById('collector-address').readOnly = true;
+            document.getElementById('div-query-status').innerHTML = `Loading...`;
 
-function onShowCollected() {
-    const collectorAddress = document.getElementById('collector-address').value;
-    if ( ethers.utils.isAddress(collectorAddress) ){
-        document.getElementById('div-items-collected').innerHTML = '';
-        showCollectedByEvents(collectorAddress);
-        // showCollectedByEnum(collectorAddress)
-    } else {
-        document.getElementById('div-items-collected').innerHTML = 'Please enter a valid address.';
-        return 0;
+            await showCollectedByEvents(collectorAddress);
+            // showCollectedByEnum(collectorAddress)
+
+            isShowingCollected = false;
+            document.getElementById('collector-address').readOnly = false;
+            document.getElementById('div-query-status').innerHTML = '';
+        } else {
+            document.getElementById('div-items-collected').innerHTML = 'Please enter a valid address.';
+            return 0;
+        }
     }
 }
 
+async function showCollectedByEvents(collectorAddress) {
+
+    document.getElementById('button-share-link').style.display = 'none';
+
+    const ownedTokenIds = await getOwnedByEvents(smartifyContract, collectorAddress);
+    console.log(ownedTokenIds);
+
+    document.getElementById('div-items-collected').innerHTML = '';
+    for (let i = 0; i < ownedTokenIds.length; i++){
+        const tokenURI = await smartifyContract.tokenURI(ownedTokenIds[i]);
+        const nftJSON = await fetchJSON(tokenURI);
+
+        document.getElementById('div-items-collected').innerHTML +=
+`
+<span class="nftdisplay">
+ITMS <a href="items.html?t=${ownedTokenIds[i]}">#${ownedTokenIds[i]}</a>
+<span class="imgbox">
+    <img class="assets" src="${nftJSON.image}" onclick="imgToFullscreen('${nftJSON.image}')">
+</span>
+</span>
+`;
+    }
+
+    if ( document.getElementById('div-items-collected').innerHTML == '' ){
+        document.getElementById('div-items-collected').innerHTML = 'No items found.';
+    } else {
+        document.getElementById('button-share-link').innerHTML = 'Copy Share Link';
+        document.getElementById('button-share-link').style.display = 'inline';
+    }
+
+}
+
+
+/* backup function, slower */
+/*
 async function showCollectedByEnum(collectorAddress) {
 
     const balanceOf = Number(await smartifyContract.balanceOf(collectorAddress));
@@ -58,68 +105,4 @@ async function showCollectedByEnum(collectorAddress) {
     }
 
 }
-
-async function showCollectedByEvents(collectorAddress) {
-
-    document.getElementById('div-collector-info').innerHTML = `Loading...</h3>`;
-
-    const eventFilterReceived = smartifyContract.filters.Transfer(null, collectorAddress, null);
-    const eventsReceived = await smartifyContract.queryFilter(eventFilterReceived);
-    // console.log(eventsReceived);
-
-    const eventFilterSent = smartifyContract.filters.Transfer(collectorAddress, null, null);
-    const eventsSent = await smartifyContract.queryFilter(eventFilterSent);
-    // console.log(eventsSent);
-
-    // const collectorAddressShort = collectorAddress.substring(0, 6) + '...' + collectorAddress.substring(collectorAddress.length - 4);
-
-    let ownedCandidates = {};
-    for (let i = 0; i < eventsReceived.length; i++){
-        const tokenId = eventsReceived[i].args[2];
-        ownedCandidates[String(tokenId)] = {};
-        ownedCandidates[String(tokenId)]["blockNumber"] = eventsReceived[i].blockNumber;
-        ownedCandidates[String(tokenId)]["owned"] = true;
-        ownedCandidates[String(tokenId)]["ownedIndex"] = i;
-    }
-    for (let i = 0; i < eventsSent.length; i++){
-        const tokenId = eventsSent[i].args[2];
-
-        if ( eventsSent[i].blockNumber >= ownedCandidates[String(tokenId)]["blockNumber"]){
-            ownedCandidates[String(tokenId)]["owned"] = false;
-        }
-    }
-
-    let arrayTokenId = Object.keys(ownedCandidates);
-    let ownedIndex = 0;
-
-    document.getElementById('div-collector-info').innerHTML = '';
-    for (let i = 0; i < arrayTokenId.length; i++) {
-        if (ownedCandidates[String(arrayTokenId[i])]["owned"] === true) {
-
-            ownedIndex++;
-            let nftURI = await smartifyContract.tokenURI(arrayTokenId[i]);
-            const foundIPFSinURI = nftURI.match(/ipfs:\/\/(\w+)/);
-            if (foundIPFSinURI != null){
-                nftURI = 'https://ipfs.io/ipfs/' + foundIPFSinURI[1];
-            }
-
-            let nftJSON = await fetchJSON(nftURI);
-            const foundIPFSinJSONImage = nftJSON.image.match(/ipfs:\/\/(\w+)/);
-            if (foundIPFSinJSONImage != null){
-                nftJSON.image = 'https://ipfs.io/ipfs/' + foundIPFSinJSONImage[1];
-            }
-
-            document.getElementById('div-items-collected').innerHTML +=
-`
-<span class="nftdisplay">
-    ITMS <a href="items.html?t=${arrayTokenId[i]}">#${arrayTokenId[i]}</a>
-    <span class="imgbox">
-        <img class="assets" src="${nftJSON.image}" onclick="imgToFullscreen('${nftJSON.image}')">
-    </span>
-</span>
-`;
-            
-        }
-    }
-
-}
+*/

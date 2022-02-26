@@ -25,13 +25,14 @@ async function selectRandom() {
 
 async function showToken() {
 
+    document.getElementById('button-share-link').style.display = 'none';
     console.log('Loading token info...');
 
     const totalSupply = await smartifyContract.totalSupply();
 
     const tokenId = Number(document.getElementById('input-token-id').value);
 
-    document.getElementById('div-token-info').innerHTML = '';
+    document.getElementById('div-token-info').innerHTML = 'Loading... ';
 
     if ( tokenId <= Number(totalSupply) ){
 
@@ -49,12 +50,22 @@ async function showToken() {
         //     string plainIpfsCID
         // );
     
+        /* Cannot filter non-indexed parameters... */
+        // const hashtagFilter = smartifyContract.filters.TokenHashtags(tokenId);
+        // const hashtagEvents = await smartifyContract.queryFilter(hashtagFilter);
+        // const onChainHashtags = (
+        //     hashtagEvents[0].args[1], 
+        //     hashtagEvents[0].args[2], 
+        //     hashtagEvents[0].args[3]
+        // );
+        // console.log(onChainHashtags);
         // event TokenHashtags(
         //     uint256 tokenId, 
         //     bytes32 indexed hashtag_1, 
         //     bytes32 indexed hashtag_2, 
         //     bytes32 indexed hashtag_3
         // );
+
         const creator = events[0].args[2];
         const creatorShort = creator.substring(0, 6) + '...' + creator.substring(creator.length - 4);
 
@@ -75,7 +86,7 @@ async function showToken() {
         if (foundIPFSinJSONImage != null){
             nftJSON.image = IPFS_GATEWAY + foundIPFSinJSONImage[1];
         }
-        document.getElementById('div-token-info').innerHTML +=
+        document.getElementById('div-token-info').innerHTML =
         `
         <img class="preview" onclick="imgToFullscreen('${nftJSON.image}')" src="${nftJSON.image}">
         <p style="text-decoration: underline">ITMS #${tokenId}</p>
@@ -91,6 +102,11 @@ async function showToken() {
         // `<img class="nft-image" src="${nftJSON.image}">`;
         // console.log(nftJSON.description);
 
+        document.getElementById('button-share-link').innerHTML = 'Copy Share Link';
+        document.getElementById('button-share-link').style.display = 'inline';
+
+    } else {
+        document.getElementById('div-token-info').innerHTML = 'Invalid Token ID';
     }
 
 

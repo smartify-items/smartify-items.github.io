@@ -5,20 +5,37 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop) => searchParams.get(prop),
 });
 
+
+
+
+let isShowingHashtagged = false;
+
 if (params["h"] !== null){
     const _hashtag = decodeURI(params["h"]);
     console.log(_hashtag);
 	document.getElementById('input-hashtag').value = _hashtag;
-    showHashtagged(_hashtag);
+    
+    onShowHashtagged()
+}
+
+async function onShowHashtagged(){
+    if ( isShowingHashtagged == false ){
+        isShowingHashtagged = true;
+        document.getElementById('input-hashtag').readOnly = true;
+        document.getElementById('div-query-status').innerHTML = 'Loading... ';
+
+        const hashtag = document.getElementById('input-hashtag').value;
+        await showHashtagged(hashtag);
+
+        isShowingHashtagged = false;
+        document.getElementById('input-hashtag').readOnly = false;
+        document.getElementById('div-query-status').innerHTML = '';
+    }
 }
 
 async function showHashtagged(hashtag) {
-    // event TokenHashtags(
-    //     uint256 tokenId, 
-    //     bytes32 indexed hashtag_1, 
-    //     bytes32 indexed hashtag_2, 
-    //     bytes32 indexed hashtag_3
-    // );
+
+    document.getElementById('button-share-link').style.display = 'none';
 
     const hashtagFilter_1 = smartifyContract.filters.TokenHashtags(null, hashtagToBytes32(hashtag), null, null);
     const hashtagEvents_1 = await smartifyContract.queryFilter(hashtagFilter_1);
@@ -34,35 +51,15 @@ async function showHashtagged(hashtag) {
 
     const hashtagEvents = hashtagEvents_3.concat(hashtagEvents_2).concat(hashtagEvents_1);
     
-    
-    
-    // return 0;
-    // const createdByShort = createdBy.substring(0, 6) + '...' + createdBy.substring(createdBy.length - 4);
-
-    let previousTokenURI = '';
-    let isRepeating = false;
-
     document.getElementById('div-items-hashtagged').innerHTML = '';
-    let htmlToAdd = '';
-    let nftJSON;
     
     for (let i = hashtagEvents.length-1; i >= 0; i--) {
         const tokenId = hashtagEvents[i].args[0];
-        // const tokenURI = await smartifyContract.tokenURI(tokenId);
-
-        // event CreateToken(
-        //     uint256 indexed tokenId, 
-        //     string indexed hashedIpfsCID, 
-        //     address indexed createdBy, 
-        //     uint16 editions, 
-        //     string plainIpfsCID
-        // );
         const tokenFilter = smartifyContract.filters.CreateToken(tokenId);
         const tokenEvents = await smartifyContract.queryFilter(tokenFilter);
         console.log(tokenEvents);
 
         const creator = tokenEvents[0].args[2];
-        // const editions = tokenEvents[0].args[3];
         const tokenURI = IPFS_GATEWAY + tokenEvents[0].args[4];
         console.log(tokenURI);
 
@@ -77,19 +74,13 @@ async function showHashtagged(hashtag) {
             isRepeating = false;
 
             if (i < hashtagEvents.length-1){
-                htmlToAdd += '</div>';
+                document.getElementById('div-items-hashtagged').innerHTML += '</div>';
             }
 
             previousTokenURI = tokenURI;
-
             nftJSON = await fetchJSON(tokenURI);
-            // const foundIPFSinJSONImage = nftJSON.image.match(/ipfs:\/\/(\w+)/);
-            // if (foundIPFSinJSONImage != null){
-            //     nftJSON.image = 'https://ipfs.io/ipfs/' + foundIPFSinJSONImage[1];
-            // }
 
-
-            htmlToAdd += 
+            document.getElementById('div-items-hashtagged').innerHTML += 
 `
 <div class="nft-item">
     <img class="preview" src="${nftJSON.image}" onclick="imgToFullscreen('${nftJSON.image}')">
@@ -110,12 +101,12 @@ async function showHashtagged(hashtag) {
 
         } else {
             if (isRepeating == true){
-                htmlToAdd += 
+                document.getElementById('div-items-hashtagged').innerHTML += 
 `
 <span class="nft-token-info"><a href="items.html?t=${tokenId}">#${tokenId}</a> </span>&nbsp;
 `;
             } else {
-                htmlToAdd += 
+                document.getElementById('div-items-hashtagged').innerHTML += 
 `
 <span class="nft-token-info">&nbsp;&nbsp;&nbsp;... also as&nbsp;&nbsp;&nbsp;<a href="items.html?t=${tokenId}">#${tokenId}</a> </span>&nbsp;
 `;
@@ -126,15 +117,19 @@ async function showHashtagged(hashtag) {
 
     }
 
-    htmlToAdd += 
+    isRepeating = false;
+
+    if ( document.getElementById('div-items-hashtagged').innerHTML == '' ){
+        document.getElementById('div-items-hashtagged').innerHTML = 'No items found.';
+    } else {
+        document.getElementById('div-items-hashtagged').innerHTML += 
 `
     </div>
 </div>
 `;
-    isRepeating = false;
-    
-    // console.log(htmlToAdd);
-    document.getElementById('div-items-hashtagged').innerHTML += htmlToAdd;
 
+        document.getElementById('button-share-link').innerHTML = 'Copy Share Link';
+        document.getElementById('button-share-link').style.display = 'inline';
+    }
 
 }

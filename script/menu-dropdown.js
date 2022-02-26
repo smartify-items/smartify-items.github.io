@@ -19,7 +19,7 @@ document.getElementById('div-menu-dropdown').innerHTML =
     </div>
 </div>
 &nbsp;
-<h1 class="title">${document.getElementById('h1-title').innerHTML}</h1>
+<h1 class="title">${document.getElementById('h1-title').innerHTML + TESTNET_MARKER}</h1>
 `
 
 function myFunction() {

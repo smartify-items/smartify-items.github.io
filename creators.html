@@ -25,11 +25,15 @@
     <!-- Header >> -->
     <h1 id="h1-title" style="display: none">Creators</h1>
     <div id="div-menu-dropdown"></div>
-    <script src="script/menu-dropdown.js"></script>
     <!-- << Header -->
 
     <input name="creator-address" id="creator-address" type="text" placeholder="Creator Address: 0x..." style="width: 430px" onchange="onShowCreated()">
+    <span style="padding-left: 4px">&nbsp;</span>
+    <button id="button-share-link" style="display: none" onclick="copyShareLink('creators')">Copy Share Link</button>
+    <span style="padding-left: 4px">&nbsp;</span>
+    <a id="a-check-collections" href="" style="display: none"></a>
 
+    <div id="div-query-status" style="line-height: 3"></div>
     <div id="div-items-created" style="margin: 12px; text-align: center;"></div>
     <div id="div-fullpage" onclick="this.style.display='none'"></div>
 
@@ -37,6 +41,7 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
     <script src="script/network-config.js"></script>
+    <script src="script/menu-dropdown.js"></script>
     <!-- <script src="script/connect-wallet-and-network.js"></script> -->
     <script src="script/contract-abi.js"></script>
     <script src="script/common-tools.js"></script>

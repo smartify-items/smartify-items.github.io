@@ -25,14 +25,14 @@
     <!-- Header >> -->
     <h1 id="h1-title" style="display: none">Items</h1>
     <div id="div-menu-dropdown"></div>
-    <script src="script/menu-dropdown.js"></script>
     <!-- << Header -->
 
 
 
 	<input type="number" name="input-token-id" id="input-token-id" type="text" placeholder="ITMS #" style="width: 160px" min="1" onchange="showToken()">
 	<!-- <button type="button" onclick="selectRandom()">Select Random</button> -->
-
+    <span style="padding-left: 4px">&nbsp;</span>
+    <button id="button-share-link" style="display: none" onclick="copyShareLink('items')">Copy Share Link</button>
 
 	<div id="div-token-info" style="margin: 50px 10% 50px; text-align: center;"></div>
     <div id="div-fullpage" onclick="this.style.display='none'"></div>
@@ -44,6 +44,7 @@
 	<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
 	<!-- <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script> -->
     <script src="script/network-config.js"></script>
+    <script src="script/menu-dropdown.js"></script>
 	<!-- <script src="script/connect-wallet-and-network.js"></script> -->
 	<script src="script/contract-abi.js"></script>
 	<script src="script/common-tools.js"></script>
