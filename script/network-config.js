@@ -34,7 +34,7 @@ const IPFS_GATEWAYS = [];
     IPFS_GATEWAYS[2] = 'https://infura-ipfs.io/ipfs/';
     IPFS_GATEWAYS[3] = 'https://gateway.pinata.cloud/ipfs/';
     IPFS_GATEWAYS[4] = 'https://cloudflare-ipfs.com/ipfs/';
-const IPFS_GATEWAY = IPFS_GATEWAYS[0];
+const IPFS_GATEWAY = IPFS_GATEWAYS[2];
 
 
 // Rinkeby
