@@ -38,6 +38,7 @@ async function onShowCollection() {
 
         if ( creatorAddress == '' || !ethers.utils.isAddress(creatorAddress) ){
             document.getElementById('div-query-status').innerHTML = 'Please enter a valid creator address.';
+            document.getElementById('div-collection-hashtags').innerHTML = '';
             isShowingCollection = false;
             return 0;
         }
@@ -154,14 +155,18 @@ async function showCollection(_creator, _hashtag) {
             tokenURI = IPFS_GATEWAY + events[i].args[4];
         }
         
-        if (tokenURI !== previousTokenURI) {
+        if (tokenURI !== previousTokenURI) {    // finds a new token
             isRepeating = false;
 
-            if ( i < events.length-1 ){
+            if ( i > 0 && i < events.length-1 ){    // checks out htmlToAdd to innerHTML only after first NFT
+                                                    // does not check out for the last array element
                 htmlToAdd += `
     </div>
+</div>
 `;
-
+                // finishes div and checks out, reset htmlToAdd
+                // note that .innerHTML seems to fix HTML syntax errors automatically
+                // which can cause issues (pose limits in coding choices)
                 document.getElementById('div-collection').innerHTML += htmlToAdd;
                 htmlToAdd = '';
             }
@@ -205,11 +210,11 @@ async function showCollection(_creator, _hashtag) {
 `;
             
 
-        } else {
-            if (isRepeating == true){
+        } else {    // token repeats, same as previous
+            if (isRepeating == true){   // if already repeating, append to the 'also as' list
                 htmlToAdd += 
 `        <span class="nft-token-info"><a href="items.html?t=${tokenId}">#${tokenId}</a> </span>&nbsp;`;
-            } else {
+            } else {                    // if first repeat, start 'also as' list, and set isRepeating to true
                 htmlToAdd += 
 `        <span class="nft-token-info">&nbsp;&nbsp;&nbsp;... also as&nbsp;&nbsp;&nbsp;<a href="items.html?t=${tokenId}">#${tokenId}</a> </span>&nbsp;`;
                 isRepeating = true;
@@ -217,17 +222,18 @@ async function showCollection(_creator, _hashtag) {
 
         }
 
-    }
-
-    htmlToAdd += 
+        if ( i == events.length-1 ){ // checks out last array element
+            htmlToAdd += 
 `
     </div>
 </div>
 `;
-    document.getElementById('div-collection').innerHTML += htmlToAdd;
-    htmlToAdd = '';
+            document.getElementById('div-collection').innerHTML += htmlToAdd;
+            htmlToAdd = '';
+        }
 
-    isRepeating = false;
+    }
+
 
     if ( document.getElementById('div-collection').innerHTML == '' ){
         document.getElementById('div-collection').innerHTML = 'No items found.';
