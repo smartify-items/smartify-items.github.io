@@ -95,11 +95,13 @@ async function showCollection(_creator, _hashtag) {
 
     let events;
 
+    let createdTokenIds = [];
     let creatorEvents = [];
     if ( _creator != '' ){
         [createdTokenIds, creatorEvents] = await getCreatorTokenIds(_creator);
         events = creatorEvents;
     }
+    console.log(createdTokenIds);
 
     let taggedTokenIds = [];
     let hashtagEvents = [];
@@ -110,6 +112,7 @@ async function showCollection(_creator, _hashtag) {
             events = hashtagEvents;
         }
     }
+    console.log(taggedTokenIds);
 
     let previousTokenURItoMatch = '';
     let previousTokenURI = '';
