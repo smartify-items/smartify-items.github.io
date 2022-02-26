@@ -46,7 +46,7 @@ async function showCreated(createdBy) {
 
     const createdByShort = createdBy.substring(0, 6) + '...' + createdBy.substring(createdBy.length - 4);
 
-    document.getElementById('div-items-created').innerHTML = 'ITMS&nbsp;&nbsp;created by&nbsp;&nbsp;' + createdByShort;
+    // document.getElementById('div-items-created').innerHTML = 'ITMS&nbsp;&nbsp;created by&nbsp;&nbsp;' + createdByShort;
 
     let previousTokenURI = '';
     let isRepeating = false;
@@ -61,8 +61,16 @@ async function showCreated(createdBy) {
         if (tokenURI !== previousTokenURI) {
             isRepeating = false;
 
-            if (i < events.length-1){
-                htmlToAdd += '</div>';
+            if (i < events.length-1){   // does not check out for the last array element
+                htmlToAdd += `
+    </div>
+</div>
+`;
+                // finishes div and checks out, reset htmlToAdd
+                // note that .innerHTML seems to fix HTML syntax errors automatically
+                // which can cause issues (pose limits in coding choices)
+                document.getElementById('div-items-created').innerHTML += htmlToAdd;
+                htmlToAdd = '';
             }
 
             previousTokenURI = tokenURI;
@@ -120,6 +128,7 @@ async function showCreated(createdBy) {
     isRepeating = false;
     
     document.getElementById('div-items-created').innerHTML += htmlToAdd;
+    htmlToAdd = '';    
 
     if ( document.getElementById('div-items-created').innerHTML == '' ){
         document.getElementById('div-items-created').innerHTML = 'No items found.';
