@@ -218,7 +218,12 @@
         white-space: pre-wrap;
         margin-top: 10px;
         margin-bottom: 10px;
-    }   
+    }
+
+    div.query-results {
+        margin: 12px auto 60px; 
+        text-align: center;
+    }
 
     span.nftdisplay {
         display: inline-block;

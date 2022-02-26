@@ -20,11 +20,18 @@ if (params["h"] !== null){
 
 async function onShowHashtagged(){
     if ( isShowingHashtagged == false ){
+        
+        const hashtag = document.getElementById('input-hashtag').value;
+        if ( hashtag == '' ){
+            document.getElementById('div-query-status').innerHTML = 'Please specify a #hashtag.';
+            document.getElementById('button-share-link').style.display = 'none';
+            document.getElementById('div-items-hashtagged').innerHTML = '';
+            return 0;
+        }        
+
         isShowingHashtagged = true;
         document.getElementById('input-hashtag').readOnly = true;
         document.getElementById('div-query-status').innerHTML = 'Loading... ';
-
-        const hashtag = document.getElementById('input-hashtag').value;
         await showHashtagged(hashtag);
 
         isShowingHashtagged = false;

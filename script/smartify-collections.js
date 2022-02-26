@@ -142,7 +142,7 @@ async function showCollection(_creator, _hashtag) {
                     isMatched = false;
                 }
             }
-            if (isMatched == false && i != createdTokenIds.length-1){
+            if (isMatched == false){
                 // console.log('skipping ' + i);
                 continue;
             }
@@ -228,20 +228,18 @@ async function showCollection(_creator, _hashtag) {
 
         }   // if token repeats conditional ends here
 
+    }   // for loop ends here
+
         // console.log((i+1) + ' of ' + createdTokenIds.length);
-        if ( i == createdTokenIds.length-1 ){ // checks out last array element
-            htmlToAdd += 
+        // checks out last array element
+        htmlToAdd += 
 `
     </div>
 </div>
 `;
-            // console.log('checkout content of last array elemet');
-            document.getElementById('div-collection').innerHTML += htmlToAdd;
-            htmlToAdd = '';
-        }
-
-    }   // for loop ends here
-
+        // console.log('checkout content of last array elemet');
+        document.getElementById('div-collection').innerHTML += htmlToAdd;
+        htmlToAdd = '';
 
     if ( document.getElementById('div-collection').innerHTML == '' ){
         document.getElementById('div-collection').innerHTML = 'No items found.';
