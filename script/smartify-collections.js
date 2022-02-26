@@ -94,29 +94,29 @@ async function showCollection(_creator, _hashtag) {
     document.getElementById('button-share-link').style.display = 'none';
     document.getElementById('div-collection-hashtags').innerHTML = '';
 
-    let events;
+    // let events;
 
     let createdTokenIds = [];
     let creatorEvents = [];
     if ( _creator != '' ){
         [createdTokenIds, creatorEvents] = await getCreatorTokenIds(_creator);
-        events = creatorEvents;
+        // events = creatorEvents;
     }
     console.log(createdTokenIds);
 
     let taggedTokenIds = [];
-    let hashtagEvents = [];
+    // let hashtagEvents = [];
     if (_hashtag != ''){
         [taggedTokenIds, hashtagEvents] = await getHashtaggedTokenIds(_hashtag);
 
-        if (_creator == ''){
-            events = hashtagEvents;
-        }
+        // if (_creator == ''){
+        //     events = hashtagEvents;
+        // }
     }
     console.log(taggedTokenIds);
 
-    let previousTokenURItoMatch = '';
     let previousTokenURI = '';
+    let previousTokenURItoMatch = '';
     let isRepeating = false;
 
     let nftJSON;
@@ -125,40 +125,44 @@ async function showCollection(_creator, _hashtag) {
     let htmlToAdd = '';
 
     let isMatched = false;
-    for (let i = 0; i < events.length; i++) {
-        const tokenId = Number(events[i].args[0]);
+    for (let i = 0; i < createdTokenIds.length; i++) {
+        const tokenId = createdTokenIds[i];
 
         let tokenURI;
         if ( _creator != '' && _hashtag != '' ) {       // both creator and hashtag
-            tokenURI = IPFS_GATEWAY + events[i].args[4];
+            tokenURI = IPFS_GATEWAY + creatorEvents[i].args[4];
 
-            if ( tokenURI != previousTokenURItoMatch ){
-                previousTokenURItoMatch = tokenURI;
-                if ( taggedTokenIds.includes(tokenId) ){
+            if ( tokenURI != previousTokenURItoMatch ){            // if finds new tokenURI 
+                // console.log('new token at ' + i + ' ' + tokenId);
+                previousTokenURItoMatch = tokenURI;                // save tokenURI
+                                                            // compares only if new tokenURI
+                if ( taggedTokenIds.includes(tokenId) ){    // if tokenID is in tagged list
                     isMatched = true;
                 } else {
                     isMatched = false;
                 }
             }
-            if (isMatched == false){
+            if (isMatched == false && i != createdTokenIds.length-1){
+                // console.log('skipping ' + i);
                 continue;
             }
         }
+        // console.log('isMatched: ' + isMatched + ' for ' + i + ', ' + tokenId);
 
-        if ( _creator == '' && _hashtag != '' ) {       // in this case events = hashtagEvents
-            const tokenFilter = smartifyContract.filters.CreateToken(tokenId);
-            const tokenEvents = await smartifyContract.queryFilter(tokenFilter);
-            tokenURI = IPFS_GATEWAY + tokenEvents[0].args[4];
-        }
+        // if ( _creator == '' && _hashtag != '' ) {       // in this case events = hashtagEvents
+        //     const tokenFilter = smartifyContract.filters.CreateToken(tokenId);
+        //     const tokenEvents = await smartifyContract.queryFilter(tokenFilter);
+        //     tokenURI = IPFS_GATEWAY + tokenEvents[0].args[4];
+        // }
 
-        if ( _creator != '' && _hashtag == '' ) {       // in this case events = creatorEvents
-            tokenURI = IPFS_GATEWAY + events[i].args[4];
-        }
+        // if ( _creator != '' && _hashtag == '' ) {       // in this case events = creatorEvents
+            tokenURI = IPFS_GATEWAY + creatorEvents[i].args[4];
+        // }
         
         if (tokenURI !== previousTokenURI) {    // finds a new token
             isRepeating = false;
 
-            if ( i > 0 && i < events.length-1 ){    // checks out htmlToAdd to innerHTML only after first NFT
+            if ( i > 0 && i < createdTokenIds.length-1 ){    // checks out htmlToAdd to innerHTML only after first NFT
                                                     // does not check out for the last array element
                 htmlToAdd += `
     </div>
@@ -167,6 +171,7 @@ async function showCollection(_creator, _hashtag) {
                 // finishes div and checks out, reset htmlToAdd
                 // note that .innerHTML seems to fix HTML syntax errors automatically
                 // which can cause issues (pose limits in coding choices)
+                // console.log('checkout content before tokenId: ' + createdTokenIds[i]);
                 document.getElementById('div-collection').innerHTML += htmlToAdd;
                 htmlToAdd = '';
             }
@@ -175,10 +180,10 @@ async function showCollection(_creator, _hashtag) {
 
             nftJSON = await fetchJSON(tokenURI);
 
-            for (let i = 0; i < nftJSON.hashtags.length; i++) {
-                    if ( ! creatorHashtags.includes(nftJSON.hashtags[i]) ){
-                        document.getElementById('div-collection-hashtags').innerHTML += `<a class="hashtag" href="collections.html?a=${_creator}&h=${encodeURIComponent(nftJSON.hashtags[i])}">${nftJSON.hashtags[i]}</a>${hashtagSpacing}`;
-                        creatorHashtags.push(nftJSON.hashtags[i]);
+            for (let j = 0; j < nftJSON.hashtags.length; j++) {
+                    if ( ! creatorHashtags.includes(nftJSON.hashtags[j]) ){
+                        document.getElementById('div-collection-hashtags').innerHTML += `<a class="hashtag" href="collections.html?a=${_creator}&h=${encodeURIComponent(nftJSON.hashtags[j])}">${nftJSON.hashtags[j]}</a>${hashtagSpacing}`;
+                        creatorHashtags.push(nftJSON.hashtags[j]);
                     }
             }
 
@@ -211,6 +216,7 @@ async function showCollection(_creator, _hashtag) {
             
 
         } else {    // token repeats, same as previous
+
             if (isRepeating == true){   // if already repeating, append to the 'also as' list
                 htmlToAdd += 
 `        <span class="nft-token-info"><a href="items.html?t=${tokenId}">#${tokenId}</a> </span>&nbsp;`;
@@ -220,19 +226,21 @@ async function showCollection(_creator, _hashtag) {
                 isRepeating = true;
             }
 
-        }
+        }   // if token repeats conditional ends here
 
-        if ( i == events.length-1 ){ // checks out last array element
+        // console.log((i+1) + ' of ' + createdTokenIds.length);
+        if ( i == createdTokenIds.length-1 ){ // checks out last array element
             htmlToAdd += 
 `
     </div>
 </div>
 `;
+            // console.log('checkout content of last array elemet');
             document.getElementById('div-collection').innerHTML += htmlToAdd;
             htmlToAdd = '';
         }
 
-    }
+    }   // for loop ends here
 
 
     if ( document.getElementById('div-collection').innerHTML == '' ){
