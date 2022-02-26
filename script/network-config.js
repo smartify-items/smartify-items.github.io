@@ -34,7 +34,7 @@ const IPFS_GATEWAYS = [];
     IPFS_GATEWAYS[2] = 'https://infura-ipfs.io/ipfs/';
     IPFS_GATEWAYS[3] = 'https://gateway.pinata.cloud/ipfs/';
     IPFS_GATEWAYS[4] = 'https://cloudflare-ipfs.com/ipfs/';
-const IPFS_GATEWAY = IPFS_GATEWAYS[2];
+const IPFS_GATEWAY = IPFS_GATEWAYS[0];
 
 
 // Rinkeby
@@ -69,6 +69,7 @@ let NETWORK_SCANNER;
 let BLOCK_INTERVAL;
 let TESTNET_MARKER;
 let BASE_URL;
+let MINTING_STATUS;
 
 switch ( Number(DEPLOYED_NETWORK_ID) ){
     case 0x4:       // Testnet Rinkeby
@@ -77,6 +78,7 @@ switch ( Number(DEPLOYED_NETWORK_ID) ){
         BLOCK_INTERVAL = RINKEBY_BLOCK_INTERVAL;
         TESTNET_MARKER = '&nbsp;&nbsp;&nbsp;&nbsp;* Testnet Rinkeby *';
         BASE_URL = 'https://dliwilb.github.io/smartify-items/';
+        MINTING_STATUS = 'Mint is open to all on Testnet Rinkeby. To mint on smartBCH, please visit <a href="https://smartify-items.github.io/">smartify-items.github.io</a>.';
         break;
     case 0x2710:    // smartBCH
         HTTPS_RPC = SMARTBCH_RPC;
@@ -84,5 +86,6 @@ switch ( Number(DEPLOYED_NETWORK_ID) ){
 		BLOCK_INTERVAL = SMARTBCH_BLOCK_INTERVAL;
         TESTNET_MARKER = '';
         BASE_URL = 'https://smartify-items.github.io/';
+        MINTING_STATUS = 'Currently only whitelisted users can mint. <a href="https://noise.cash/c/smartify-1kn9n62l">Inquiries</a> are very welcome.';
         break;
 }

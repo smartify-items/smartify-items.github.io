@@ -81,7 +81,14 @@ async function showToken() {
         //     tokenURI = IPFS_GATEWAY + foundIPFSinURI[1];
         // }
 
-        let nftJSON = await fetchJSON(tokenURI);
+        let nftJSON;
+        try {
+            nftJSON = await fetchJSON(tokenURI);
+        } catch (e) {
+            console.log(e);
+            return 0;
+        }
+
         const foundIPFSinJSONImage = nftJSON.image.match(/ipfs:\/\/(\w+)/);
         if (foundIPFSinJSONImage != null){
             nftJSON.image = IPFS_GATEWAY + foundIPFSinJSONImage[1];

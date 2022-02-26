@@ -75,7 +75,12 @@ async function showCreated(createdBy) {
 
             previousTokenURI = tokenURI;
 
-            nftJSON = await fetchJSON(tokenURI);
+            try {
+                nftJSON = await fetchJSON(tokenURI);
+            } catch (e) {
+                console.log(e);
+                continue;
+            }
 
             const foundIPFSinJSONImage = nftJSON.image.match(/ipfs:\/\/(\w+)/);
             if (foundIPFSinJSONImage != null){

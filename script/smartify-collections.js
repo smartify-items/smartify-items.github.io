@@ -178,7 +178,12 @@ async function showCollection(_creator, _hashtag) {
 
             previousTokenURI = tokenURI;
 
-            nftJSON = await fetchJSON(tokenURI);
+            try {
+                nftJSON = await fetchJSON(tokenURI);
+            } catch (e) {
+                console.log(e);
+                continue;
+            }
 
             for (let j = 0; j < nftJSON.hashtags.length; j++) {
                     if ( ! creatorHashtags.includes(nftJSON.hashtags[j]) ){

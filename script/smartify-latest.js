@@ -43,7 +43,13 @@ async function showLatestItems(offsetHours) {
             if (tokenURI !== previousTokenURI) {
                 previousTokenURI = tokenURI;
 
-                let nftJSON = await fetchJSON(tokenURI);
+                let nftJSON;
+                try{ 
+                    nftJSON = await fetchJSON(tokenURI);
+                } catch (e) {
+                    console.log(e);
+                    continue;
+                }
 
                 const foundIPFSinJSONImage = nftJSON.image.match(/ipfs:\/\/(\w+)/);
                 if (foundIPFSinJSONImage != null){

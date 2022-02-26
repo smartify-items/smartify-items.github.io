@@ -85,7 +85,13 @@ async function showHashtagged(hashtag) {
             }
 
             previousTokenURI = tokenURI;
-            nftJSON = await fetchJSON(tokenURI);
+            
+            try{ 
+                nftJSON = await fetchJSON(tokenURI);
+            } catch (e) {
+                console.log(e);
+                continue;
+            }
 
             document.getElementById('div-items-hashtagged').innerHTML += 
 `

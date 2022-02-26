@@ -1,3 +1,7 @@
+document.getElementById('h4-mint-status').innerHTML = MINTING_STATUS;
+
+
+
 /* ------------------------------------------------------------------------------------- */
 // supported MIME Types
 

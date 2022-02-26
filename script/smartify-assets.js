@@ -26,7 +26,14 @@ async function showItems() {
 
         for (let i = 0; i < ownedTokenIds.length; i++){
             const tokenURI = await smartifyContract.tokenURI(ownedTokenIds[i]);
-            const nftJSON = await fetchJSON(tokenURI);
+            
+            let nftJSON;
+            try{ 
+                nftJSON = await fetchJSON(tokenURI);
+            } catch (e) {
+                console.log(e);
+                continue;
+            }
 
             document.getElementById('list-of-nfts').innerHTML +=
 `<span class="nftdisplay">
