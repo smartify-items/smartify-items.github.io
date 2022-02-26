@@ -40,6 +40,10 @@ async function showLatestItems(offsetHours) {
             const tokenURI = IPFS_GATEWAY + events[i].args[4];
             const createdBy = events[i].args[2];
 
+            if ( ! IsIpfs.url(tokenURI) ){
+                continue;
+            }
+
             if (tokenURI !== previousTokenURI) {
                 previousTokenURI = tokenURI;
 
@@ -48,6 +52,10 @@ async function showLatestItems(offsetHours) {
                     nftJSON = await fetchJSON(tokenURI);
                 } catch (e) {
                     console.log(e);
+                    continue;
+                }
+
+                if ( ! IsIpfs.url(nftJSON.image) ){
                     continue;
                 }
 
