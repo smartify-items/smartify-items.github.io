@@ -191,7 +191,18 @@ async function showPreview() {
     }
 
     if ( ! (_IS_WALLET_CONNECTED_ && _IS_NETWORK_CONNECTED_) ) {
-        alert('Please connect wallet to the smartBCH network.');
+        alert(`Please connect wallet to the ${NETWORK_NAME} network.`);
+        return 0;
+    }
+
+    const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
+    const isWhitelisted = await smartifyContract.verifyUser(_CONNECTED_ACC_);
+    console.log('isWhitelisted: ' + isWhitelisted);
+    const whitelistWaiver = await smartifyContract.whitelistWaiver();
+    console.log('whitelistWaiver: ' + whitelistWaiver);
+    if (! (isWhitelisted || whitelistWaiver)){
+        alert('Sorry, you currently do not have the right to mint.');
         return 0;
     }
 
