@@ -41,6 +41,7 @@ async function showLatestItems(offsetHours) {
             const createdBy = events[i].args[2];
 
             if ( ! IsIpfs.url(tokenURI) ){
+                console.log('Invalid ipfs url: ' + tokenURI);
                 continue;
             }
 
@@ -56,6 +57,7 @@ async function showLatestItems(offsetHours) {
                 }
 
                 if ( ! IsIpfs.url(nftJSON.image) ){
+                    console.log('Invalid ipfs image url: ' + tokenURI);
                     continue;
                 }
 

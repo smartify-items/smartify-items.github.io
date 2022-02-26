@@ -47,11 +47,21 @@ async function showCollectedByEvents(collectorAddress) {
     for (let i = 0; i < ownedTokenIds.length; i++){
         const tokenURI = await smartifyContract.tokenURI(ownedTokenIds[i]);
         
+        if ( ! IsIpfs.url(tokenURI) ){
+            console.log('Invalid ipfs image url: ' + tokenURI);
+            continue;
+        }
+
         let nftJSON;
         try{ 
             nftJSON = await fetchJSON(tokenURI);
         } catch (e) {
             console.log(e);
+            continue;
+        }
+
+        if ( ! IsIpfs.url(nftJSON.image) ){
+            console.log('Invalid ipfs url: ' + tokenURI);
             continue;
         }
 

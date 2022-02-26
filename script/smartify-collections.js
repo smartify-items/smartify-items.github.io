@@ -132,6 +132,11 @@ async function showCollection(_creator, _hashtag) {
         if ( _creator != '' && _hashtag != '' ) {       // both creator and hashtag
             tokenURI = IPFS_GATEWAY + creatorEvents[i].args[4];
 
+            if ( ! IsIpfs.url(tokenURI) ){
+                console.log('Invalid ipfs url: ' + tokenURI);
+                continue;
+            }
+
             if ( tokenURI != previousTokenURItoMatch ){            // if finds new tokenURI 
                 // console.log('new token at ' + i + ' ' + tokenId);
                 previousTokenURItoMatch = tokenURI;                // save tokenURI
@@ -182,6 +187,11 @@ async function showCollection(_creator, _hashtag) {
                 nftJSON = await fetchJSON(tokenURI);
             } catch (e) {
                 console.log(e);
+                continue;
+            }
+
+            if ( ! IsIpfs.url(nftJSON.image) ){
+                console.log('Invalid ipfs image url: ' + tokenURI);
                 continue;
             }
 

@@ -58,6 +58,11 @@ async function showCreated(createdBy) {
         const tokenId = events[i].args[0];
         const tokenURI = IPFS_GATEWAY + events[i].args[4];
 
+        if ( ! IsIpfs.url(tokenURI) ){
+            console.log('Invalid ipfs url: ' + tokenURI);
+            continue;
+        }
+
         if (tokenURI !== previousTokenURI) {
             isRepeating = false;
 
@@ -79,6 +84,11 @@ async function showCreated(createdBy) {
                 nftJSON = await fetchJSON(tokenURI);
             } catch (e) {
                 console.log(e);
+                continue;
+            }
+
+            if ( ! IsIpfs.url(nftJSON.image) ){
+                console.log('Invalid ipfs image url: ' + tokenURI);
                 continue;
             }
 

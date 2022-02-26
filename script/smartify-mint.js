@@ -273,11 +273,19 @@ async function smartify(){
         document.getElementById('span-status').innerHTML = statusMessageUploadingFile + statusSpinningWheel;
         const fileIpfsHash = await pinFileToIPFS();
         console.log(fileIpfsHash);
+        if ( fileIpfsHash == '' ){
+            document.getElementById('span-status').innerHTML = 'File upload failed.';
+            return 0;
+        }
 
         /* upload metadeta to IPFS */
         document.getElementById('span-status').innerHTML = statusMessageUploadingMeta + statusSpinningWheel;
         const jsonIpfsHash = await pinJSONToIPFS(fileIpfsHash);
         console.log(jsonIpfsHash);
+        if ( jsonIpfsHash == '' ){
+            document.getElementById('span-status').innerHTML = 'Metadata upload failed.';
+            return 0;
+        }
         
         /* convert CID to two bytes32 */
         const [part_1, part_2] = cidToBytes32(jsonIpfsHash);

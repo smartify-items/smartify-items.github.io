@@ -70,6 +70,11 @@ async function showHashtagged(hashtag) {
         const tokenURI = IPFS_GATEWAY + tokenEvents[0].args[4];
         console.log(tokenURI);
 
+        if ( ! IsIpfs.url(tokenURI) ){
+            console.log('Invalid ipfs url: ' + tokenURI);
+            continue;
+        }
+
         const creatorShort = creator.substring(0, 6) + '...' + creator.substring(creator.length - 4);
 
         let previousTokenURI = '';
@@ -90,6 +95,11 @@ async function showHashtagged(hashtag) {
                 nftJSON = await fetchJSON(tokenURI);
             } catch (e) {
                 console.log(e);
+                continue;
+            }
+
+            if ( ! IsIpfs.url(nftJSON.image) ){
+                console.log('Invalid ipfs image url: ' + tokenURI);
                 continue;
             }
 
