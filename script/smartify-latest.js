@@ -1,3 +1,4 @@
+document.getElementById('div-latest-status').innerHTML = document.getElementById('div-latest-status').innerHTML + SPINNING_WHEEL_IMG;
 
 const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
 const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);

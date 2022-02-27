@@ -181,6 +181,13 @@
         cursor: zoom-in;
     }
 
+    div.list-image {
+        text-align: center;
+        display: inline-block;
+        width: 600px;
+        cursor: zoom-in;
+    }
+
     img.preview{
         max-width: 500px; 
         max-height: 600px;
@@ -218,6 +225,28 @@
         white-space: pre-wrap;
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+
+    div.collection-creators {
+        white-space: pre-wrap;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    div.oasis-info {
+        text-align: right;
+        margin: 5px 50px 5px;
+        width: 500px;
+        /* border: 1px solid white; */
+    }
+
+    span.oasis-info {
+        width: 480px;
+        /* display: none; */
+        /* margin: 5px 50px 5px; */
+        /* text-align: right; */
+        /* overflow-wrap: break-word; */
+        white-space: pre-wrap;
     }
 
     div.query-results {

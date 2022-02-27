@@ -31,7 +31,7 @@ async function onShowHashtagged(){
 
         isShowingHashtagged = true;
         document.getElementById('input-hashtag').readOnly = true;
-        document.getElementById('div-query-status').innerHTML = 'Loading... ';
+        document.getElementById('div-query-status').innerHTML = LOADING_MESSAGE;
         await showHashtagged(hashtag);
 
         isShowingHashtagged = false;

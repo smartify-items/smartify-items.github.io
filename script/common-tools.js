@@ -17,6 +17,12 @@ function checkBounds(_elementId, _lowerBoundInclusive, _upperBoundInclusive){
 }
 
 
+function shortAddr(_address){
+    const addressShort_ = _address.substring(0, 6) + '...' + _address.substring(_address.length - 4);
+    return addressShort_;
+}
+
+
 function copyShareLink(type) {
     let creatorAddress;
     let collectionHashtag;
@@ -43,7 +49,8 @@ function copyShareLink(type) {
             break;
         case 'collectors':
             collectorAddress = document.getElementById('collector-address').value;
-            navigator.clipboard.writeText(window.location.origin + `/collectors.html?a=${collectorAddress}`);
+            creatorAddress = document.getElementById('creator-address').value;
+            navigator.clipboard.writeText(window.location.origin + `/collectors.html?a=${collectorAddress}&b=${creatorAddress}`);
             break;
     }
     
@@ -73,6 +80,7 @@ async function getOwnedByEvents(_contract, _ownerAddress){
     const eventsSent = await _contract.queryFilter(filterSent);
 
     let ownedTokenIds_ = [];
+    let ownedEvents_ = [];
     let ownedCandidates = {};
 
     for (let i = 0; i < eventsReceived.length; i++){
@@ -98,11 +106,12 @@ async function getOwnedByEvents(_contract, _ownerAddress){
         if (ownedCandidates[String(tokenId)]["owned"] === true){
             if (! ownedTokenIds_.includes(Number(tokenId))){
                 ownedTokenIds_.push(Number(tokenId));
+                ownedEvents_.push(eventsReceived[i]);
             }
         }
     }
 
-    return ownedTokenIds_;
+    return [ownedTokenIds_, ownedEvents_];
 
 }
 
@@ -149,4 +158,41 @@ function hashtagToBytes32(_hashtag) {
     const zerosToPad = 66 - _bytes32.length;
 
     return (_bytes32 + zeros.substring(0, zerosToPad));
+}
+
+
+// required smartifyContract;
+async function getHashtaggedTokenIds(_hashtag){
+    const _hashtagFilter_1 = smartifyContract.filters.TokenHashtags(null, hashtagToBytes32(_hashtag), null, null);
+    const _hashtagEvents_1 = await smartifyContract.queryFilter(_hashtagFilter_1);
+
+    const _hashtagFilter_2 = smartifyContract.filters.TokenHashtags(null, null, hashtagToBytes32(_hashtag), null);
+    const _hashtagEvents_2 = await smartifyContract.queryFilter(_hashtagFilter_2);
+
+    const _hashtagFilter_3 = smartifyContract.filters.TokenHashtags(null, null, null, hashtagToBytes32(_hashtag));
+    const _hashtagEvents_3 = await smartifyContract.queryFilter(_hashtagFilter_3);
+
+    const hashtagEvents_ = _hashtagEvents_3.concat(_hashtagEvents_2).concat(_hashtagEvents_1);
+
+    let taggedTokenIds_ = [];
+    for (let i = 0; i < hashtagEvents_.length; i++) {
+        const _tokenId = hashtagEvents_[i].args[0];
+        taggedTokenIds_.push(Number(_tokenId));
+    }
+
+    return [taggedTokenIds_, hashtagEvents_];
+}
+
+// required smartifyContract;
+async function getCreateTokenByCreator(_creator){
+    const _creatorFilter = smartifyContract.filters.CreateToken(null, null, _creator);
+    const creationEvents_ = await smartifyContract.queryFilter(_creatorFilter);
+
+    let createdTokenIds_ = [];
+    for (let i = 0; i < creationEvents_.length; i++) {
+        const _tokenId = creationEvents_[i].args[0];
+        createdTokenIds_.push(Number(_tokenId));
+    }
+
+    return [createdTokenIds_, creationEvents_];
 }

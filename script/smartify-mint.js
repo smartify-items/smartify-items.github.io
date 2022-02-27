@@ -16,8 +16,6 @@ const mimeTypes = [
     'image/tiff'
 ];
 
-
-const statusSpinningWheel = '<img src="./image/Spinner-1s-30px.png">';
 const statusMessageUploadingFile = 'Uploading file to IPFS... ';
 const statusMessageUploadingMeta = 'Uploading metadata to IPFS... ';
 const statusMessageMinting = 'Minting NFT... ';
@@ -281,7 +279,7 @@ async function smartify(){
         document.getElementById('button-back').style.display = 'none';
 
         /* upload file to IPFS */
-        document.getElementById('span-status').innerHTML = statusMessageUploadingFile + statusSpinningWheel;
+        document.getElementById('span-status').innerHTML = statusMessageUploadingFile + SPINNING_WHEEL_IMG;
         const fileIpfsHash = await pinFileToIPFS();
         console.log(fileIpfsHash);
         if ( fileIpfsHash == '' ){
@@ -290,7 +288,7 @@ async function smartify(){
         }
 
         /* upload metadeta to IPFS */
-        document.getElementById('span-status').innerHTML = statusMessageUploadingMeta + statusSpinningWheel;
+        document.getElementById('span-status').innerHTML = statusMessageUploadingMeta + SPINNING_WHEEL_IMG;
         const jsonIpfsHash = await pinJSONToIPFS(fileIpfsHash);
         console.log(jsonIpfsHash);
         if ( jsonIpfsHash == '' ){
@@ -303,7 +301,7 @@ async function smartify(){
 
         
         /* Minting */
-        document.getElementById('span-status').innerHTML = statusMessageMinting + statusSpinningWheel;
+        document.getElementById('span-status').innerHTML = statusMessageMinting + SPINNING_WHEEL_IMG;
 
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
@@ -366,7 +364,7 @@ async function hashtagOnChain(){
     }
 
     try {
-        document.getElementById('span-status').innerHTML = statusMessageMinted + statusMessageHashtagging + statusSpinningWheel;
+        document.getElementById('span-status').innerHTML = statusMessageMinted + statusMessageHashtagging + SPINNING_WHEEL_IMG;
 
         const contractFunction = await smartifyContract.createTokenHashtags(
             firstTokenId, 

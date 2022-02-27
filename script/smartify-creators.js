@@ -26,7 +26,7 @@ async function onShowCreated() {
         if ( isShowingCreated == false ){
             isShowingCreated = true;
             document.getElementById('creator-address').readOnly = true;
-            document.getElementById('div-query-status').innerHTML = 'Loading... ';
+            document.getElementById('div-query-status').innerHTML = LOADING_MESSAGE;
 
             await showCreated(creatorAddress);
 

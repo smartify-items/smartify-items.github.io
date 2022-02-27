@@ -1,3 +1,10 @@
+if ( DEPLOYED_NETWORK_ID == '0x2710' ){
+    document.getElementById('h4-checkbox-oasis').style.display = '';
+}
+
+
+
+
 const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
 const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
 
@@ -20,8 +27,22 @@ if (params["h"] !== null){
 	document.getElementById('input-hashtag').value = _hashtag;
 }
 
+if (params["auction"] !== null){
+    if ( params["auction"] == 'true' ){
+        document.getElementById('checkbox-oasis').checked = true;
+        document.getElementById('checkbox-oasis').disabled = true;
+    }
+}
+
 if ( params["a"] !== null || params["h"] !== null){
-    onShowCollection();
+    onShowCollection()
+    .then( () => {
+        if ( params["auction"] !== null){
+            if ( params["auction"] == 'true' ){
+                getOasisInfo();
+            }
+        }
+    });
 }
 
 
@@ -48,7 +69,7 @@ async function onShowCollection() {
             // isShowingCollection = false;
             // return 0;
         } else {
-            document.getElementById('div-query-status').innerHTML = 'Loading...';
+            document.getElementById('div-query-status').innerHTML = LOADING_MESSAGE;
         }
 
         document.getElementById('creator-address').readOnly = true;
@@ -66,12 +87,13 @@ async function onShowCollection() {
         }
 
 
+        document.getElementById('div-query-status').innerHTML
         isShowingCollection = false;
 
     }
     // if ( creatorAddress != ''){
     //     if ( ethers.utils.isAddress(creatorAddress) ){
-    //         document.getElementById('div-query-status').innerHTML = 'Loading...';
+    //         document.getElementById('div-query-status').innerHTML = LOADING_MESSAGE;
             
     //         await showCollection(creatorAddress, collectionHashtag);
 
@@ -80,7 +102,7 @@ async function onShowCollection() {
     //         document.getElementById('div-query-status').innerHTML = 'Please enter a valid creator address.';
     //     }
     // } else {
-    //     document.getElementById('div-query-status').innerHTML = 'Loading...';
+    //     document.getElementById('div-query-status').innerHTML = LOADING_MESSAGE;
         
     //     await showCollection(creatorAddress, collectionHashtag);
 
@@ -88,6 +110,10 @@ async function onShowCollection() {
     // }
 }
 
+let eventsBlockA;
+let eventsBlockB;
+let createdTokenIds = [];
+let IdsToId = [];           // point multiple Token IDs mapping to the first of the kind
 
 async function showCollection(_creator, _hashtag) {
 
@@ -96,13 +122,17 @@ async function showCollection(_creator, _hashtag) {
 
     // let events;
 
-    let createdTokenIds = [];
-    let creatorEvents = [];
+    let creationEvents = [];
     if ( _creator != '' ){
-        [createdTokenIds, creatorEvents] = await getCreatorTokenIds(_creator);
-        // events = creatorEvents;
+        [createdTokenIds, creationEvents] = await getCreateTokenByCreator(_creator);
+        // events = creationEvents;
     }
-    console.log(createdTokenIds);
+    console.log('createdTokenIds: ' + createdTokenIds);
+
+    eventsBlockA = creationEvents[0].blockNumber;
+    eventsBlockB = creationEvents[creationEvents.length - 1].blockNumber;
+    console.log('eventsBlockA: ' + eventsBlockA);
+    console.log('eventsBlockB: ' + eventsBlockB);
 
     let taggedTokenIds = [];
     // let hashtagEvents = [];
@@ -113,8 +143,9 @@ async function showCollection(_creator, _hashtag) {
         //     events = hashtagEvents;
         // }
     }
-    console.log(taggedTokenIds);
+    console.log('taggedTokenIds: ' + taggedTokenIds);
 
+    let previousTokenId;
     let previousTokenURI = '';
     let previousTokenURItoMatch = '';
     let isRepeating = false;
@@ -130,7 +161,7 @@ async function showCollection(_creator, _hashtag) {
 
         let tokenURI;
         if ( _creator != '' && _hashtag != '' ) {       // both creator and hashtag
-            tokenURI = IPFS_GATEWAY + creatorEvents[i].args[4];
+            tokenURI = IPFS_GATEWAY + creationEvents[i].args[4];
 
             if ( ! IsIpfs.url(tokenURI) ){
                 console.log('Invalid ipfs url: ' + tokenURI);
@@ -160,12 +191,14 @@ async function showCollection(_creator, _hashtag) {
         //     tokenURI = IPFS_GATEWAY + tokenEvents[0].args[4];
         // }
 
-        // if ( _creator != '' && _hashtag == '' ) {       // in this case events = creatorEvents
-            tokenURI = IPFS_GATEWAY + creatorEvents[i].args[4];
+        // if ( _creator != '' && _hashtag == '' ) {       // in this case events = creationEvents
+            tokenURI = IPFS_GATEWAY + creationEvents[i].args[4];
         // }
         
         if (tokenURI !== previousTokenURI) {    // finds a new token
             isRepeating = false;
+            previousTokenId = tokenId;
+            IdsToId[tokenId] = previousTokenId;
 
             if ( i > 0 ){    // checks out htmlToAdd to innerHTML only after first NFT
                                                     // does not check out for the last array element
@@ -212,8 +245,13 @@ async function showCollection(_creator, _hashtag) {
             htmlToAdd += 
 `
 <div class="nft-item">
-    <img class="preview" src="${nftJSON.image}" onclick="imgToFullscreen('${nftJSON.image}')">
-    <div class="nft-token-info">
+    <div class="oasis-info">
+        <span class="oasis-info sub-highlight" id="span-oasis-token-id-${tokenId}"></span>
+    </div>
+    <div class="list-image">
+        <img class="preview" src="${nftJSON.image}" onclick="imgToFullscreen('${nftJSON.image}')">
+    </div>
+    <div>
         <span style="display: inline-block; width: 600px">
             ITMS <a href="items.html?t=${tokenId}">#${tokenId}</a>&nbsp;&nbsp;<span class="highlight">${nftJSON.name}</span>&nbsp;&nbsp;by&nbsp;&nbsp;<a class="creator" href="creators.html?a=${nftJSON.creator}">${creatorShort}</a>
         </span>
@@ -231,6 +269,8 @@ async function showCollection(_creator, _hashtag) {
             
 
         } else {    // token repeats, same as previous
+
+            IdsToId[tokenId] = previousTokenId;
 
             if (isRepeating == true){   // if already repeating, append to the 'also as' list
                 htmlToAdd += 
@@ -266,38 +306,43 @@ async function showCollection(_creator, _hashtag) {
 }
 
 
+async function getOasisInfo(){
+    if ( document.getElementById('checkbox-oasis').checked == true ){
+        document.getElementById('checkbox-oasis').disabled = true;
 
-async function getHashtaggedTokenIds(_hashtag){
-    const _hashtagFilter_1 = smartifyContract.filters.TokenHashtags(null, hashtagToBytes32(_hashtag), null, null);
-    const _hashtagEvents_1 = await smartifyContract.queryFilter(_hashtagFilter_1);
+        const oasisContract = new ethers.Contract(OASIS_CONTRACT_ADDR, OASIS_CONTRACT_ABI, provider);
+        const makeOrderFilter = oasisContract.filters.MakeOrder(CONTRACT_ADDR);
+        const makeOrderEvents = await oasisContract.queryFilter(makeOrderFilter, eventsBlockA);
 
-    const _hashtagFilter_2 = smartifyContract.filters.TokenHashtags(null, null, hashtagToBytes32(_hashtag), null);
-    const _hashtagEvents_2 = await smartifyContract.queryFilter(_hashtagFilter_2);
+        // console.log(makeOrderEvents);
+        // event MakeOrder(IERC721 indexed token, uint256 id, bytes32 indexed hash, address indexed seller);
+        // for (let i = 0; i < makeOrderEvents.length ; i++){
+        for (let i = makeOrderEvents.length-1; i >= 0 ; i--){
+            const orderTokenId = Number(makeOrderEvents[i].args[1]);
+            // console.log(orderTokenId);
 
-    const _hashtagFilter_3 = smartifyContract.filters.TokenHashtags(null, null, null, hashtagToBytes32(_hashtag));
-    const _hashtagEvents_3 = await smartifyContract.queryFilter(_hashtagFilter_3);
+            if ( createdTokenIds.includes(orderTokenId) ) {
+                const orderHash = makeOrderEvents[i].args[2];
+                console.log(orderHash);
 
-    const hashtagEvents_ = _hashtagEvents_3.concat(_hashtagEvents_2).concat(_hashtagEvents_1);
+                const currentPrice = await oasisContract.getCurrentPrice(orderHash);
+                const currentPriceBCH = currentPrice / 1e18;
+                const orderInfo = await oasisContract.orderInfo(orderHash);
+                const auctionType = ['Fixed Price', 'Dutch Auction', 'English Auction'];
 
-    let taggedTokenIds_ = [];
-    for (let i = 0; i < hashtagEvents_.length; i++) {
-        const _tokenId = hashtagEvents_[i].args[0];
-        taggedTokenIds_.push(Number(_tokenId));
+                console.log(orderTokenId + ', ' + currentPriceBCH + ' BCH, (' + auctionType[orderInfo[0]] + '), Sold: ' + orderInfo[10] + ' Cancelled: ' + orderInfo[11]);
+
+                if ( orderInfo[10] || orderInfo[11]){
+                    ; // sold or cancelled
+                } else {
+                    document.getElementById(`span-oasis-token-id-${IdsToId[orderTokenId]}`).innerHTML += '#' + orderTokenId + ': ' + currentPriceBCH + ' BCH [' + auctionType[orderInfo[0]] + `] on <a href="https://oasis.cash/token/CONTRACT_ADDR/${orderTokenId}">Oasis</a>
+`; 
+                }
+                    // + document.getElementById(`span-oasis-token-id-${orderTokenId}`).innerHTML;
+
+            }
+        }
     }
-
-    return [taggedTokenIds_, hashtagEvents_];
 }
 
-
-async function getCreatorTokenIds(_creator){
-    const _creatorFilter = smartifyContract.filters.CreateToken(null, null, _creator);
-    const creatorEvents_ = await smartifyContract.queryFilter(_creatorFilter);
-
-    let createdTokenIds_ = [];
-    for (let i = 0; i < creatorEvents_.length; i++) {
-        const _tokenId = creatorEvents_[i].args[0];
-        createdTokenIds_.push(Number(_tokenId));
-    }
-
-    return [createdTokenIds_, creatorEvents_];
-}
+{/* <span id="span-oasis-token-id-${tokenId}"></span> */}

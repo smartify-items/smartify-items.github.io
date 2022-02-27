@@ -19,7 +19,7 @@ async function showItems() {
         document.getElementById('collection-and-owner').innerHTML = `<h4>There are ${balanceOf} ITMS owned by ${ethers.utils.getAddress(_CONNECTED_ACC_.toString())}</h4>`;
 
 
-        const ownedTokenIds = await getOwnedByEvents(smartifyContract, _CONNECTED_ACC_);
+        const [ownedTokenIds, ] = await getOwnedByEvents(smartifyContract, _CONNECTED_ACC_);
         console.log(ownedTokenIds);
 
         document.getElementById('list-of-nfts').innerHTML = '';

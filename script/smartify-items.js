@@ -32,7 +32,7 @@ async function showToken() {
 
     const tokenId = Number(document.getElementById('input-token-id').value);
 
-    document.getElementById('div-token-info').innerHTML = 'Loading... ';
+    document.getElementById('div-token-info').innerHTML = LOADING_MESSAGE;
 
     if ( tokenId <= Number(totalSupply) ){
 

@@ -8,11 +8,21 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
 
 
 
+// if (params["h"] !== null){
+//     const hashtag = decodeURI(params["h"]);
+// 	document.getElementById('input-hashtag').value = hashtag;
+// }
+
+
 let isShowingCollected = false;
 
 if (params["a"] !== null){
 	document.getElementById('collector-address').value = params["a"];
     onShowCollected();
+}
+
+if (params["b"] !== null){
+	document.getElementById('creator-address').value = params["b"];
 }
 
 async function onShowCollected() {
@@ -21,13 +31,18 @@ async function onShowCollected() {
         if ( ethers.utils.isAddress(collectorAddress) ){
             isShowingCollected = true;
             document.getElementById('collector-address').readOnly = true;
+            // document.getElementById('input-hashtag').readOnly = true;
             document.getElementById('div-query-status').innerHTML = `Loading...`;
 
-            await showCollectedByEvents(collectorAddress);
+            document.getElementById('div-items-collected').innerHTML = '';
+            // const hashtag = document.getElementById('input-hashtag').value
+            // await showCollectedByEvents(collectorAddress, hashtag);
+            await showCollectedByEvents(collectorAddress, '');
             // showCollectedByEnum(collectorAddress)
 
             isShowingCollected = false;
             document.getElementById('collector-address').readOnly = false;
+            // document.getElementById('input-hashtag').readOnly = false;
             document.getElementById('div-query-status').innerHTML = '';
         } else {
             document.getElementById('div-items-collected').innerHTML = 'Please enter a valid address.';
@@ -36,14 +51,32 @@ async function onShowCollected() {
     }
 }
 
-async function showCollectedByEvents(collectorAddress) {
+async function showCollectedByEvents(_collectorAddress, _creator) {
 
     document.getElementById('button-share-link').style.display = 'none';
+    document.getElementById('div-collected-creators').innerHTML = '';
+    // document.getElementById('div-collected-hashtags').innerHTML = '';
 
-    const ownedTokenIds = await getOwnedByEvents(smartifyContract, collectorAddress);
-    console.log(ownedTokenIds);
+    const [ownedTokenIds, ownedEvents] = await getOwnedByEvents(smartifyContract, _collectorAddress);
+    console.log('ownedTokenIds: ' + ownedTokenIds);
 
-    document.getElementById('div-items-collected').innerHTML = '';
+    // let taggedTokenIds = [];
+    // // let hashtagEvents = [];
+    // if (_hashtag != '' && _hashtag != null){
+    //     [taggedTokenIds, hashtagEvents] = await getHashtaggedTokenIds(_hashtag);
+
+    //     // if (_creator == ''){
+    //     //     events = hashtagEvents;
+    //     // }
+    // }
+    // console.log('_hashtag: ' + _hashtag);
+    // console.log('taggedTokenIds: ' + taggedTokenIds);
+
+    // let collectedHashtags = [];
+    let collectedCreators = [];
+    
+
+    // let isMatched = false;
     for (let i = 0; i < ownedTokenIds.length; i++){
         const tokenURI = await smartifyContract.tokenURI(ownedTokenIds[i]);
         
@@ -63,6 +96,35 @@ async function showCollectedByEvents(collectorAddress) {
         if ( ! IsIpfs.url(nftJSON.image) ){
             console.log('Invalid ipfs url: ' + tokenURI);
             continue;
+        }
+
+        // if ( _hashtag != '' ){
+        //     if ( taggedTokenIds.includes(ownedTokenIds[i]) ){    // if tokenID is in tagged list
+        //         // isMatched = true;
+        //     } else {
+        //         continue;
+        //     }
+        // }
+
+        // for (let j = 0; j < nftJSON.hashtags.length; j++) {
+        //     if ( ! collectedHashtags.includes(nftJSON.hashtags[j]) ){
+        //         document.getElementById('div-collected-hashtags').innerHTML += `<a class="hashtag" href="collectors.html?a=${_collectorAddress}&h=${encodeURIComponent(nftJSON.hashtags[j])}">${nftJSON.hashtags[j]}</a>${hashtagSpacing}`;
+        //         collectedHashtags.push(nftJSON.hashtags[j]);
+        //     }
+        // }
+
+        if ( document.getElementById('creator-address').value != null && document.getElementById('creator-address').value != '' ){
+            if ( nftJSON.creator.toLowerCase() != document.getElementById('creator-address').value.toLowerCase() ){
+                continue;
+            }
+        }
+
+        if ( ! collectedCreators.includes(nftJSON.creator) ){
+            if ( document.getElementById('div-collected-creators').innerHTML == '' ) {
+                document.getElementById('div-collected-creators').innerHTML += 'From Creator(s):    ';
+            }
+            document.getElementById('div-collected-creators').innerHTML += `<a class="hashtag" href="collectors.html?a=${_collectorAddress}&b=${nftJSON.creator}">${shortAddr(nftJSON.creator)}</a>${hashtagSpacing}`;
+            collectedCreators.push(nftJSON.creator);
         }
 
         document.getElementById('div-items-collected').innerHTML +=
@@ -88,14 +150,14 @@ ITMS <a href="items.html?t=${ownedTokenIds[i]}">#${ownedTokenIds[i]}</a>
 
 /* backup function, slower */
 /*
-async function showCollectedByEnum(collectorAddress) {
+async function showCollectedByEnum(_collectorAddress) {
 
-    const balanceOf = Number(await smartifyContract.balanceOf(collectorAddress));
+    const balanceOf = Number(await smartifyContract.balanceOf(_collectorAddress));
     // console.log(balanceOf);
 
     for (let i = 0; i < balanceOf; i++) {
         // console.log('i: ' + i);
-        let tokenId = Number(await smartifyContract.tokenOfOwnerByIndex(collectorAddress, i));
+        let tokenId = Number(await smartifyContract.tokenOfOwnerByIndex(_collectorAddress, i));
         // console.log('nftIndex: ' + tokenId);
         
         let nftURI = await smartifyContract.tokenURI(tokenId);

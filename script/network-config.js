@@ -22,6 +22,9 @@ let _CONNECTED_ACC_;
 let _IS_WALLET_CONNECTED_;
 let _IS_NETWORK_CONNECTED_;
 
+const SPINNING_WHEEL_IMG = '<img src="./image/Spinner-1s-30px.png">';
+const LOADING_MESSAGE = 'Loading... ' + SPINNING_WHEEL_IMG;
+
 
 /* -------------------------------------------------------------------------------------- */
 // Miscellaneous variable settings

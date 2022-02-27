@@ -33,6 +33,10 @@
     <button id="button-share-link" style="display: none" onclick="copyShareLink('collections')">Copy Share Link</button>
     <!-- <span id="span-link-copied" style="padding-left: 20px"></span> -->
 
+    <h4 id="h4-checkbox-oasis" style="display: none">
+        <input type="checkbox" id="checkbox-oasis" onchange="getOasisInfo()"> Show Oasis Listing Information
+    </h4>
+
 	<div id="div-query-status" style="line-height: 3"></div>
     <div id="div-collection-hashtags" class="collection-hashtags"></div>
 	<div id="div-collection" class="query-results"></div>
@@ -46,6 +50,7 @@
     <script src="script/menu-dropdown.js"></script>
     <!-- <script src="script/connect-wallet-and-network.js"></script> -->
     <script src="script/contract-abi.js"></script>
+    <script src="script/oasis-contract-abi.js"></script>
     <script src="script/common-tools.js"></script>
     <script src="script/smartify-collections.js"></script>
 </body>

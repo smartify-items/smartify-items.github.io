@@ -9,7 +9,7 @@ if ( DEPLOYED_NETWORK_ID == '0x2710' ){
 
 async function readContractStatVar(){
     console.log('Reading contract state variables...');
-    document.getElementById('list-contract-info').innerHTML = 'Loading...';
+    document.getElementById('list-contract-info').innerHTML = LOADING_MESSAGE;
 
     const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
     const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
@@ -44,7 +44,7 @@ async function readContractStatVar(){
 
 async function readUserAddedByAdmin() {
     console.log('Reading whitelisted addresses...');
-    document.getElementById('list-UserAddedByAdmin').innerHTML = 'Loading...';
+    document.getElementById('list-UserAddedByAdmin').innerHTML = LOADING_MESSAGE;
     
     const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
     const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
@@ -78,7 +78,7 @@ async function readUserAddedByAdmin() {
 
 async function readUserAddedByUser() {
     console.log('Reading whitelisted addresses...');
-    document.getElementById('list-UserAddedByUser').innerHTML = 'Loading...';
+    document.getElementById('list-UserAddedByUser').innerHTML = LOADING_MESSAGE;
 
     const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
     const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
