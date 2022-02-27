@@ -32,8 +32,8 @@ function copyShareLink(type) {
         case 'collections': 
             creatorAddress = document.getElementById('creator-address').value;
             collectionHashtag = document.getElementById('input-hashtag').value;
-        
-            navigator.clipboard.writeText(window.location.origin + `/collections.html?a=${creatorAddress}&h=${encodeURIComponent(collectionHashtag)}`);
+            const auction = document.getElementById('checkbox-oasis').checked
+            navigator.clipboard.writeText(window.location.origin + `/collections.html?a=${creatorAddress}&h=${encodeURIComponent(collectionHashtag)}&auction=${auction}`);
             break;
         case 'hashtags': 
             collectionHashtag = document.getElementById('input-hashtag').value;
