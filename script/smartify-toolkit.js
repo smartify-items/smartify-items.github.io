@@ -47,3 +47,49 @@ async function attachHashtagOnChain(){
     }
     
 }
+
+
+async function scanEditions(){
+    const tokenId = Number(document.getElementById('input-token-id-editions').value);
+
+    const provider = new ethers.providers.JsonRpcProvider(HTTPS_RPC);
+    const smartifyContract = new ethers.Contract(CONTRACT_ADDR, CONTRACT_ABI, provider);
+
+    const totalSupply = await smartifyContract.totalSupply();
+    if ( tokenId > totalSupply || tokenId <= 0 ){
+        alert('Invalid Token ID.');
+        return 0;
+    }
+
+    // event CreateToken(
+    //     uint256 indexed tokenId, 
+    //     string indexed hashedIpfsCID, 
+    //     address indexed createdBy, 
+    //     uint16 editions, 
+    //     string plainIpfsCID
+    // );
+    const eventFilter = smartifyContract.filters.CreateToken(tokenId);
+    const events = await smartifyContract.queryFilter(eventFilter);
+    // console.log(events[0].args[1]);
+    // const hashedIpfsCID = events[0].args[1].hash
+    const plainIpfsCID =  events[0].args[4];
+
+    document.getElementById('div-editions').innerHTML = `
+IPFS CIDv1: ${plainIpfsCID} is found in the following tokens: 
+`;
+
+    // console.log(tokenId + ': ' + hashedIpfsCID);
+    
+
+    // hashedIpfsCID = '0x998454156d19634ca30551bdc750679341e1e8079d8f9ac6e3bf458a97045450';
+    const hashFilter = smartifyContract.filters.CreateToken(null, plainIpfsCID);
+    const hashEvents = await smartifyContract.queryFilter(hashFilter);
+
+    console.log(hashEvents);
+    for (let i = 0; i < hashEvents.length; i++){
+        document.getElementById('div-editions').innerHTML += 
+`
+ITMS #${hashEvents[i].args[0]} created by ${hashEvents[i].args[2]} (of ${hashEvents[i].args[3]} editions)`;
+    }
+
+}

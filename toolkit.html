@@ -27,7 +27,10 @@
     <div id="div-menu-dropdown"></div>
     <!-- << Header -->
 
-    <h2 class="highlight">Append hashtags </h2>
+    <hr>
+
+    <!-- Append hashtags >> -->
+    <h2 id="h2-append-hashtags" class="highlight">Creators: Append Hashtags to minted ITMS</h2>
 
     <div style="margin: 20px auto 40px">
         <p>Currently only one set of 3 hashtags is allowed for a given NFT. In the case of multiple editions, the token Creator may attach different sets of hashtags to each individual edition to maximize exposure when an <a href="hashtags.html">on-chain query</a> is made.</p>
@@ -45,13 +48,36 @@
     </div> -->
 
     <div style="margin: 20px auto 40px">
-        <h3 class="sub-highlight">Specify the ITEM # (Token ID) and enter the hashtags (up to three) that you would like to attach to the token. If error warnings occur, most likely it is either that the token is already hashtagged, or you are not the creator.</h3>
+        <h3 class="sub-highlight">Specify the ITMS # (Token ID) and enter the hashtags (up to three) that you would like to attach to the token. If error warnings occur, most likely it is either that the token is already hashtagged, or you are not the creator.</h3>
         <input type="number" name="input-token-id" id="input-token-id" type="text" placeholder="ITMS #" style="width: 130px" min="1">
         <input type="text" id="nft-hashtags" style="width: 360px" placeholder="#smartBCH, #noise, #ptt..." />
         <button id="button-check-hashtag" onclick="attachHashtagOnChain()" class="">Confirm and Sign with Wallet</button>
     </div>
-    
+    <!-- << Append hashtags -->
 
+    <hr>
+
+
+    <!-- Editions check >> -->
+    <h2 id="h2-editions-scanner" class="highlight">Collectors: Editions Scanner </h2>
+    
+    <div style="margin: 20px auto 40px">
+        <p>As a potential collector, you might want to know how many editions have been minted for a certain creation. During the minting process, a creator can issue multiple editions, and such information is logged onto the metadata as well as the blockchain. The platform however does not prohibit more editions be issued in a subsequent mint, either by the original creator or by third parties.</p>
+
+        <p>The scanner below queries the contract on the blockchain for all Token IDs that point to the same content identifier (CID), which is a hash that governs the uniqueness of the NFT metatdata (but not the NFT work itself).</p>
+    </div>
+
+    <div style="margin: 20px auto 10px">
+        <input type="number" name="input-token-id-editions" id="input-token-id-editions" type="text" placeholder="ITMS #" style="width: 130px" min="1">
+        <button id="button-scan-editions" onclick="scanEditions()" class="">Scan</button>
+    </div>
+
+    <div id="div-editions" style="white-space: pre-wrap; margin-bottom: 60px">&nbsp;</div>
+
+
+    <!-- << Editions check -->
+    
+    <hr>
 
     <!-- Footer -->
     <br><br>
