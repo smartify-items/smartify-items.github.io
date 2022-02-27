@@ -32,7 +32,7 @@ async function onShowCollected() {
             isShowingCollected = true;
             document.getElementById('collector-address').readOnly = true;
             // document.getElementById('input-hashtag').readOnly = true;
-            document.getElementById('div-query-status').innerHTML = `Loading...`;
+            document.getElementById('div-query-status').innerHTML = LOADING_MESSAGE;
 
             document.getElementById('div-items-collected').innerHTML = '';
             // const hashtag = document.getElementById('input-hashtag').value

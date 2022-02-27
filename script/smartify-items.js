@@ -26,7 +26,7 @@ async function selectRandom() {
 async function showToken() {
 
     document.getElementById('button-share-link').style.display = 'none';
-    console.log('Loading token info...');
+    // console.log('Loading token info...');
 
     const totalSupply = await smartifyContract.totalSupply();
 
