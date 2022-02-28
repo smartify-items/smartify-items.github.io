@@ -335,7 +335,7 @@ async function getOasisInfo(){
                 if ( orderInfo[10] || orderInfo[11]){
                     ; // sold or cancelled
                 } else {
-                    document.getElementById(`span-oasis-token-id-${IdsToId[orderTokenId]}`).innerHTML += '#' + orderTokenId + ': ' + currentPriceBCH + ' BCH [' + auctionType[orderInfo[0]] + `] on <a href="https://oasis.cash/token/CONTRACT_ADDR/${orderTokenId}">Oasis</a>
+                    document.getElementById(`span-oasis-token-id-${IdsToId[orderTokenId]}`).innerHTML += '#' + orderTokenId + ': ' + currentPriceBCH + ' BCH [' + auctionType[orderInfo[0]] + `] on <a href="https://oasis.cash/token/${CONTRACT_ADDR}/${orderTokenId}">Oasis</a>
 `; 
                 }
                     // + document.getElementById(`span-oasis-token-id-${orderTokenId}`).innerHTML;
