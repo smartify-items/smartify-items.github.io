@@ -44,15 +44,15 @@ async function showHashtagged(hashtag) {
 
     document.getElementById('button-share-link').style.display = 'none';
 
-    const hashtagFilter_1 = smartifyContract.filters.TokenHashtags(null, hashtagToBytes32(hashtag), null, null);
+    const hashtagFilter_1 = smartifyContract.filters.TokenHashtags(null, ethers.utils.formatBytes32String(hashtag), null, null);
     const hashtagEvents_1 = await smartifyContract.queryFilter(hashtagFilter_1);
     console.log(hashtagEvents_1);
 
-    const hashtagFilter_2 = smartifyContract.filters.TokenHashtags(null, null, hashtagToBytes32(hashtag), null);
+    const hashtagFilter_2 = smartifyContract.filters.TokenHashtags(null, null, ethers.utils.formatBytes32String(hashtag), null);
     const hashtagEvents_2 = await smartifyContract.queryFilter(hashtagFilter_2);
     console.log(hashtagEvents_2);
 
-    const hashtagFilter_3 = smartifyContract.filters.TokenHashtags(null, null, null, hashtagToBytes32(hashtag));
+    const hashtagFilter_3 = smartifyContract.filters.TokenHashtags(null, null, null, ethers.utils.formatBytes32String(hashtag));
     const hashtagEvents_3 = await smartifyContract.queryFilter(hashtagFilter_3);
     console.log(hashtagEvents_3);
 
@@ -75,7 +75,7 @@ async function showHashtagged(hashtag) {
             continue;
         }
 
-        const creatorShort = creator.substring(0, 6) + '...' + creator.substring(creator.length - 4);
+        // const creatorShort = creator.substring(0, 6) + '...' + creator.substring(creator.length - 4);
 
         let previousTokenURI = '';
         let isRepeating = false;
@@ -109,7 +109,7 @@ async function showHashtagged(hashtag) {
     <img class="preview" src="${nftJSON.image}" onclick="imgToFullscreen('${nftJSON.image}')">
     <div class="nft-token-info">
         <span style="display: inline-block; width: 600px">
-            ITMS <a href="items.html?t=${tokenId}">#${tokenId}</a>&nbsp;&nbsp;<span class="highlight">${nftJSON.name}</span>&nbsp;&nbsp;by&nbsp;&nbsp;<a class="creator" href="creators.html?a=${creator}">${creatorShort}</a>
+            ITMS <a href="items.html?t=${tokenId}">#${tokenId}</a>&nbsp;&nbsp;<span class="highlight">${nftJSON.name}</span>&nbsp;&nbsp;by&nbsp;&nbsp;<a class="creator" href="creators.html?a=${creator}">${await shortAddr(creator)}</a>
         </span>
         <div style="display: inline-block; width: 480px; text-align: right">
             <span class="more-info" href="#" onclick="displaySwitch('div-info-${i}', 'block')">more info &#x21e9;</span>

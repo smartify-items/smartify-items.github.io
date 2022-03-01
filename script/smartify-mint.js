@@ -368,9 +368,9 @@ async function hashtagOnChain(){
 
         const contractFunction = await smartifyContract.createTokenHashtags(
             firstTokenId, 
-            hashtagToBytes32(threeHashtags[0]), 
-            hashtagToBytes32(threeHashtags[1]), 
-            hashtagToBytes32(threeHashtags[2]), 
+            ethers.utils.formatBytes32String(threeHashtags[0]), 
+            ethers.utils.formatBytes32String(threeHashtags[1]), 
+            ethers.utils.formatBytes32String(threeHashtags[2]), 
             );
         const tx = await contractFunction.wait();
         const event = tx.events[0];
